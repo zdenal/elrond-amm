@@ -141,4 +141,40 @@ pub trait Adder {
 
         share
     }
+
+    #[view(getWithdrawEstimate)]
+    fn get_withdraw_estimate(&self, share: BigUint) -> (BigUint, BigUint) {
+        let detail = self.pool_detail().get();
+        require!(detail.shares_total >= share, "Share should be less than total share");
+
+        let token1_amount = &share * &detail.token1_total / &detail.shares_total;
+        let token2_amount = share * detail.token2_total / detail.shares_total;
+        (token1_amount, token2_amount)
+    }
+
+    #[endpoint]
+    fn withdraw(&self, share: BigUint) -> (BigUint, BigUint) {
+        let caller = self.blockchain().get_caller();
+        let shares_amount = self.shares().get(&caller).unwrap_or(BigUint::zero());
+
+        require!(&share <= &shares_amount, "Insufficient amount");
+
+        let (token1_amount, token2_amount) = self.get_withdraw_estimate(share.clone());
+        let detail = self.pool_detail().get();
+
+        self.token1_accounts().entry(caller.clone()).and_modify(|value| *value += &token1_amount);
+        self.token2_accounts().entry(caller.clone()).and_modify(|value| *value += &token2_amount);
+        self.shares().entry(caller.clone()).and_modify(|value| *value -= &share);
+
+        let updated_detail = PoolDetail {
+            token1_total: &detail.token1_total - &token1_amount,
+            token2_total: &detail.token2_total - &token2_amount,
+            shares_total: &detail.shares_total - &share,
+            ..detail
+        };
+
+        self.pool_detail().set(updated_detail);
+
+        (token1_amount, token2_amount)
+    }
 }
