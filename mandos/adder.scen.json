@@ -1,0 +1,204 @@
+{
+  "name": "init",
+  "comment": "init then check",
+  "gasSchedule": "v3",
+  "steps": [
+    {
+      "step": "setState",
+      "accounts": {
+        "address:owner": {
+          "nonce": "1",
+          "balance": "0"
+        },
+        "address:zdenko": {
+          "nonce": "1",
+          "balance": "100"
+        }
+      },
+      "newAddresses": [
+        {
+          "creatorAddress": "address:owner",
+          "creatorNonce": "1",
+          "newAddress": "sc:adder"
+        }
+      ]
+    },
+    {
+      "step": "scDeploy",
+      "txId": "1",
+      "tx": {
+        "from": "address:owner",
+        "contractCode": "file:../output/crowdfunding.wasm",
+        "arguments": ["5"],
+        "gasLimit": "15,000,000",
+        "gasPrice": "0"
+      },
+      "expect": {
+        "out": [],
+        "status": "",
+        "logs": "*",
+        "gas": "*",
+        "refund": "*"
+      }
+    },
+    {
+      "step": "scQuery",
+      "txId": "2",
+      "tx": {
+        "to": "sc:adder",
+        "function": "getPoolDetail",
+        "arguments": []
+      },
+      "expect": {
+        "out": ["biguint:0|biguint:0|biguint:0|biguint:5"],
+        "status": "",
+        "logs": []
+      }
+    },
+    {
+      "step": "scQuery",
+      "txId": "3",
+      "tx": {
+        "to": "sc:adder",
+        "function": "faucet",
+        "arguments": ["100", "200"]
+      },
+      "expect": {
+        "out": [],
+        "status": "0",
+        "logs": []
+      }
+    },
+    {
+      "step": "scQuery",
+      "txId": "4",
+      "tx": {
+        "to": "sc:adder",
+        "function": "getMyHoldings",
+        "arguments": []
+      },
+      "expect": {
+        "out": ["biguint:100|biguint:200|biguint:0"],
+        "status": "",
+        "logs": []
+      }
+    },
+    {
+      "step": "scQuery",
+      "txId": "5",
+      "tx": {
+        "to": "sc:adder",
+        "function": "provide",
+        "arguments": ["100", "200"]
+      },
+      "expect": {
+        "out": ["100,000000"],
+        "status": "0",
+        "logs": [],
+        "gas": "*",
+        "refund": "*"
+      }
+    },
+    {
+      "step": "scQuery",
+      "txId": "6",
+      "tx": {
+        "to": "sc:adder",
+        "function": "getMyHoldings",
+        "arguments": []
+      },
+      "expect": {
+        "out": ["biguint:0|biguint:0|biguint:100,000000"],
+        "status": "",
+        "logs": []
+      }
+    },
+    {
+      "step": "scCall",
+      "txId": "7",
+      "tx": {
+        "to": "sc:adder",
+        "from": "address:zdenko",
+        "gasLimit": "10,000,000",
+        "gasPrice": "0",
+        "function": "faucet",
+        "arguments": ["200", "200"]
+      },
+      "expect": {
+        "out": [],
+        "status": "0",
+        "logs": []
+      }
+    },
+    {
+      "step": "scCall",
+      "txId": "8",
+      "tx": {
+        "to": "sc:adder",
+        "from": "address:zdenko",
+        "function": "provide",
+        "gasLimit": "10,000,000",
+        "gasPrice": "0",
+        "arguments": ["100", "201"]
+      },
+      "expect": {
+        "out": [],
+        "status": "4",
+        "message": "str:Non equivalent value",
+        "logs": "*",
+        "gas": "*",
+        "refund": "*"
+      }
+    },
+    {
+      "step": "scCall",
+      "txId": "9",
+      "tx": {
+        "to": "sc:adder",
+        "from": "address:zdenko",
+        "function": "provide",
+        "gasLimit": "10,000,000",
+        "gasPrice": "0",
+        "arguments": ["50", "100"]
+      },
+      "expect": {
+        "out": ["50,000000"],
+        "status": "0",
+        "logs": [],
+        "gas": "*",
+        "refund": "*"
+      }
+    },
+    {
+      "step": "scCall",
+      "txId": "10",
+      "tx": {
+        "to": "sc:adder",
+        "from": "address:zdenko",
+        "gasLimit": "10,000,000",
+        "gasPrice": "0",
+        "function": "getMyHoldings",
+        "arguments": []
+      },
+      "expect": {
+        "out": ["biguint:150|biguint:100|biguint:50,000000"],
+        "status": "",
+        "logs": []
+      }
+    },
+    {
+      "step": "scQuery",
+      "txId": "11",
+      "tx": {
+        "to": "sc:adder",
+        "function": "getPoolDetail",
+        "arguments": []
+      },
+      "expect": {
+        "out": ["biguint:150|biguint:300|biguint:150,000000|biguint:5"],
+        "status": "",
+        "logs": []
+      }
+    }
+  ]
+}
