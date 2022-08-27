@@ -1,36 +1,13 @@
 Inspired by tutorial https://learn.figment.io/tutorials/build-polkadot-amm-using-ink.
 
-# Interaction
-
-## On devnet
-
-Deploy & interact with contract:
-
+# Run FE
+In `fe-svelte-kit` directory run:
 ```
-python3 ./interaction/playground.py --pem=./testnet/wallets/users/alice.pem --proxy=http://localhost:7950
+pnpm install
+pnpm run dev
 ```
 
-Interact with existing contract:
-
-```
-python3 ./interaction/playground.py --pem=./testnet/wallets/users/alice.pem --proxy=http://localhost:7950 --contract=erd1...
-```
-
-## On testnet
-
-Deploy & interact with contract:
-
-```
-python3 ./interaction/playground.py --pem=my.pem --proxy=https://testnet-gateway.elrond.com
-```
-
-Interact with existing contract:
-
-```
-python3 ./interaction/playground.py --pem=my.pem --proxy=https://testnet-gateway.elrond.com --contract=erd1...
-```
-
-# Test
+# Tests
 
 Run test:
 ```
@@ -38,6 +15,23 @@ erdpy contract build
 erdpy contract test
 ```
 
+# Interaction (deploy, querying, ...)
+In examples is proxy set to https://devnet-gateway.elrond.com, change it if you want to work
+with different chain
+## For deploy
+Run interaction python script w/o `--contract` address arg and chose `1. Deploy`
+```
+python3 ./interaction/playground.py --pem=./wallet/walletKey.pem --proxy=https://devnet-gateway.elrond.com --contract erd1qqqqqqqqqqqqqpgqmq04sd9355zryhek7lly4a4sspxdwwg453ds53uesn
+```
+## Once contract is deployed
+Once contract is deployed run interaction script w/ contract address you got from deploy step
+```
+python3 ./interaction/playground.py --pem=./wallet/walletKey.pem --proxy=https://devnet-gateway.elrond.com --contract CONTRACT_ADDRESS_FROM_DEPLOY_STEP
+```
+
 # Docs
 - https://docs.rs/elrond-wasm/latest/elrond_wasm/
 - https://docs.elrond.com/developers/overview/
+- https://docs.elrond.com/sdk-and-tools/erdjs/erdjs/
+- https://medium.com/@henryhienton/how-to-create-a-crypto-wallet-generating-a-pem-file-on-the-elrond-devnet-network-e545ab3a4a11
+- https://docs.elrond.com/sdk-and-tools/erdpy/deriving-the-wallet-pem-file/

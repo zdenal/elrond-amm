@@ -42,9 +42,9 @@ if __name__ == '__main__':
 
         tx = contract.deploy(
             owner=user,
-            arguments=["0x0064"],
+            arguments=["0x0005"],
             gas_price=gas_price,
-            gas_limit=50000000,
+            gas_limit=600000000,
             value=0,
             chain=chain,
             version=tx_version
@@ -55,8 +55,8 @@ if __name__ == '__main__':
         logger.info("Tx hash: %s", tx_on_network.get_hash())
         logger.info("Contract address: %s", contract.address.bech32())
 
-    def get_sum_flow():
-        answer = contract.query(proxy, "getSum", [])
+    def get_pool_detail_flow():
+        answer = contract.query(proxy, "getPoolDetail", [])
         logger.info(f"Answer: {answer}")
 
     def add_flow(number):
@@ -79,7 +79,7 @@ if __name__ == '__main__':
     while True:
         print("Let's run a flow.")
         print("1. Deploy")
-        print("2. Query getSum()")
+        print("2. Query getPoolDetail()")
         print("3. Add()")
 
         try:
@@ -91,7 +91,7 @@ if __name__ == '__main__':
             deploy_flow()
             user.nonce += 1
         elif choice == 2:
-            get_sum_flow()
+            get_pool_detail_flow()
         elif choice == 3:
             number = int(input("Enter number:"))
             add_flow(number)
