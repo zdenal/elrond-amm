@@ -24,7 +24,7 @@ const config = {
 	},
 	optimizeDeps: {
 		esbuildOptions: {
-			plugins: [NodeGlobalsPolyfillPlugin({ buffer: true, fs: true })],
+			plugins: [NodeGlobalsPolyfillPlugin({ buffer: true })],
 			target: 'es2020'
 		}
 	},
@@ -34,19 +34,9 @@ const config = {
 			plugins: [nodePolyfills()]
 		}
 	},
-	alias: {
-		// This Rollup aliases are extracted from @esbuild-plugins/node-modules-polyfill,
-		// see https://github.com/remorses/esbuild-plugins/blob/master/node-modules-polyfill/src/polyfills.ts
-		// process and buffer are excluded because already managed
-		// by node-globals-polyfill
-		//crypto: 'crypto-browserify',
-		//fs: 'rollup-plugin-node-polyfills/polyfills/fs'
+	server: {
+		fs: { allow: ['contract'] }
 	}
-	//build: {
-	//rollupOptions: {
-	//external: ['fs/promises']
-	//}
-	//}
 };
 
 export default config;

@@ -34,5 +34,7 @@ python3 ./interaction/playground.py --pem=./wallet/walletKey.pem --proxy=https:/
 - https://docs.rs/elrond-wasm/latest/elrond_wasm/
 - https://docs.elrond.com/developers/overview/
 - https://docs.elrond.com/sdk-and-tools/erdjs/erdjs/
+- https://docs.elrond.com/sdk-and-tools/erdjs/erdjs-cookbook/
 - https://medium.com/@henryhienton/how-to-create-a-crypto-wallet-generating-a-pem-file-on-the-elrond-devnet-network-e545ab3a4a11
 - https://docs.elrond.com/sdk-and-tools/erdpy/deriving-the-wallet-pem-file/
+- https://elrondnetwork.github.io/elrond-sdk-docs/erdjs/latest/modules/typesystem.html
