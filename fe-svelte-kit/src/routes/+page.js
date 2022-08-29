@@ -39,10 +39,11 @@ export async function load() {
 		queryResponse,
 		endpointDefinition
 	);
-	console.log('fee is', firstValue.fieldsByName.get('fee').value.value.toNumber());
 
 	return {
-		title: 'Hello world!',
-		content: 'Welcome to our blog. Lorem ipsum dolor sit amet...'
+		fee: firstValue.fieldsByName.get('fee').value.value.toNumber(),
+		token1Total: firstValue.fieldsByName.get('token1_total').value.value.toNumber(),
+		token2Total: firstValue.fieldsByName.get('token2_total').value.value.toNumber(),
+		sharesTotal: firstValue.fieldsByName.get('shares_total').value.value.toNumber()
 	};
 }
