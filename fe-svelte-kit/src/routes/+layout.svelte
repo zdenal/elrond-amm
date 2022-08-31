@@ -1,5 +1,10 @@
 <script>
   import "../app.css";
+  import Link from "../components/Link.svelte";
+
+  import { page } from '$app/stores';
+
+  $: path = $page.url.pathname;
 </script>
 
 <div class="min-h-full">
@@ -14,14 +19,10 @@
               </div>
               <div class="hidden md:block">
                 <div class="ml-10 flex items-baseline space-x-4">
-                  <!-- Current: "bg-gray-900 text-white", Default: "text-gray-300 hover:bg-gray-700 hover:text-white" -->
-                  <a href="swap" class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Swap</a>
-
-                  <a href="provide" class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Provide</a>
-
-                  <a href="faucet" class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Faucet</a>
-
-                  <a href="account" class="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">Account</a>
+                  <Link href='/' text='Account' active={path == "/"} />
+                  <Link href='swap' text='Swap' active={path == "/swap"} />
+                  <Link href='provide' text='Provide' active={path == "/provide"} />
+                  <Link href='faucet' text='Faucet' active={path == "/faucet"} />
                 </div>
               </div>
             </div>
