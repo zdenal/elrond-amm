@@ -1,0 +1,24 @@
+<script>
+  import AmountInput from "../../components/AmountInput.svelte";
+</script>
+
+<div class="flex flex-col space-y-8">
+  <div>
+    <h3 class="text-2xl leading-6 font-medium text-gray-900">Provide</h3>
+  </div>
+  <div>
+    <AmountInput label="Amount of Token1" currencyName="Balance: 1000" />
+  </div>
+  <div class="flex flex-col items-center">
+    <svg class="text-gray-500"  width="50" height="50" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">  <path stroke="none" d="M0 0h24v24H0z"/>  <circle cx="12" cy="12" r="9" />  <line x1="9" y1="12" x2="15" y2="12" />  <line x1="12" y1="9" x2="12" y2="15" /></svg>
+  </div>
+  <div>
+    <AmountInput label="Amount of Token2" currencyName="Balance: 1000" />
+  </div>
+  <div class="flex flex-col items-center">
+    <button type="button" class="w-1/2 justify-center inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-base font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
+      Provide
+    </button>
+  </div>
+</div>
+
