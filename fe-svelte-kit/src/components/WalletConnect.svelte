@@ -1,7 +1,19 @@
 <script>
-    import {closeModal} from 'svelte-modals'
+  import {closeModal} from 'svelte-modals'
+  import { ExtensionProvider } from "@elrondnetwork/erdjs-extension-provider";
 
-    export let isOpen
+  export let isOpen;
+  export let provider;
+
+  async function useDeFiWallet() {
+    const extProvider = ExtensionProvider.getInstance();
+    await extProvider.init();
+    await extProvider.login();
+
+    console.log("Account:", extProvider.account);
+    provider.set(extProvider);
+    closeModal();
+  }
 </script>
 
 {#if isOpen}
@@ -18,7 +30,7 @@
               </h3>
               <div class="mt-2 flex flex-col space-y-4">
                 <p class="text-sm text-gray-500">Lorem ipsum dolor sit amet consectetur adipisicing elit. Consequatur amet labore.</p>
-                <button type="button" class="inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-base font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
+                <button on:click={useDeFiWallet} type="button" class="inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-base font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
                   Maiar DeFi Wallet
                 </button>
               </div>
@@ -34,10 +46,3 @@
     </div>
   </div>
 {/if}
-
-<style>
-    .modal {
-        display: flex;
-    }
-
-</style>
