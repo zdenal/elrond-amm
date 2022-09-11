@@ -1,20 +1,28 @@
 <script>
   import { form, field } from 'svelte-forms';
   import { required } from 'svelte-forms/validators';
+  import { TransactionWatcher, TransactionHash } from '@elrondnetwork/erdjs';
   import { faucet } from '../../contract';
-  import { provider } from '../../stores';
+  import { provider, contractData } from '../../stores';
   import AmountInput from "../../components/AmountInput.svelte";
+  import { load as loadHoldings } from '../../store/myHoldings';
 
   export let data;
 
 
-  const token1Amount = field('token1Amount', 200, [required()]);
-  const token2Amount = field('token2Amount', 200, [required()]);
+  const token1Amount = field('token1Amount', 50, [required()]);
+  const token2Amount = field('token2Amount', 50, [required()]);
   const myForm = form(token1Amount, token2Amount);
 
-  function handleFaucet() {
+  async function handleFaucet() {
     if($provider) {
-      faucet({token1Amount: $token1Amount.value, token2Amount: $token2Amount.value, provider: $provider, ...data.contractData})
+      const txHash = await faucet({token1Amount: $token1Amount.value, token2Amount: $token2Amount.value, provider: $provider, ...data.contractData})
+      console.log("hash: ", txHash);
+      let watcher = new TransactionWatcher($contractData.networkProvider);
+      watcher.awaitCompleted({ getHash: () => new TransactionHash(txHash) }).then(res => {
+        console.log("Tx watcher result", res);
+        loadHoldings($provider, $contractData);
+      });
     } else {
       console.warn('Provider not set');
     }

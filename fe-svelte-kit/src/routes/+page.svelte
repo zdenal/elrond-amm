@@ -3,7 +3,8 @@
   export let data;
 
   import { Modals, closeModal, openModal } from 'svelte-modals'
-  import {provider, myHoldings} from '../stores.js';
+  import {provider} from '../stores.js';
+  import {myHoldings} from '../store/myHoldings';
 
   import WalletConnect from "./../components/WalletConnect.svelte";
 

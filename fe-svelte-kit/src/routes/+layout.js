@@ -1,5 +1,6 @@
-import { contractData, provider, myHoldings } from '../stores.js';
-import { init, getMyHoldings } from '../contract';
+import { contractData, provider } from '../stores.js';
+import { init } from '../contract';
+import { load as loadHoldings } from '../store/myHoldings';
 
 /** @type {import('./$types').PageLoad} */
 export async function load() {
@@ -8,12 +9,7 @@ export async function load() {
 
 	provider.subscribe((value) => {
 		if (value?.account) {
-			getMyHoldings({
-				address: value.account.address,
-				..._contractData
-			}).then((res) => {
-				myHoldings.set(res);
-			});
+			loadHoldings(value, _contractData);
 		}
 	});
 
