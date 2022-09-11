@@ -2,7 +2,7 @@
   /** @type {import('./$types').PageData} */
   export let data;
 
-  import { Modals, closeModal, openModal } from 'svelte-modals'
+  import { openModal } from 'svelte-modals'
   import {provider} from '../stores.js';
   import {myHoldings} from '../store/myHoldings';
 
@@ -12,10 +12,6 @@
       openModal(WalletConnect, {provider})
   }
 </script>
-
-<Modals>
-    <div slot="backdrop" on:click={closeModal}></div>
-</Modals>
 
 <div>
   <div class="mb-6">
@@ -74,14 +70,3 @@
     </dl>
   </div>
 </div>
-
-<style>
-  .backdrop {
-    position: fixed;
-    top: 0;
-    bottom: 0;
-    right: 0;
-    left: 0;
-    background: rgba(0,0,0,0.50)
-  }
-</style>

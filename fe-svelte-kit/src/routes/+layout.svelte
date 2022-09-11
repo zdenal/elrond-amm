@@ -1,5 +1,6 @@
 <script>
   import Notifications from 'svelte-notifications';
+  import { Modals, closeModal } from 'svelte-modals'
   import { page } from '$app/stores';
 
   import "../app.css";
@@ -9,6 +10,10 @@
 </script>
 
 <Notifications>
+  <Modals>
+      <div slot="backdrop" on:click={closeModal}></div>
+  </Modals>
+
   <div class="min-h-full">
     <div class="bg-gray-800 pb-32">
       <nav class="bg-gray-800">
@@ -85,3 +90,14 @@
     </main>
   </div>
 </Notifications>
+
+<style>
+  .backdrop {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    background: rgba(0,0,0,0.50)
+  }
+</style>
