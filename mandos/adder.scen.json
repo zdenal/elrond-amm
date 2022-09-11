@@ -81,7 +81,13 @@
         "arguments": []
       },
       "expect": {
-        "out": ["biguint:100|biguint:200|biguint:0"],
+        "out": [
+          {
+            "0token1_amount": "biguint:100",
+            "1token2_amount": "biguint:200",
+            "2shares_amount": "biguint:0"
+          }
+        ],
         "status": "",
         "logs": []
       }
@@ -113,7 +119,13 @@
         "arguments": []
       },
       "expect": {
-        "out": ["biguint:0|biguint:0|biguint:100,000000"],
+        "out": [
+          {
+            "0token1_amount": "biguint:0",
+            "1token2_amount": "biguint:0",
+            "2shares_amount": "biguint:100,000000"
+          }
+        ],
         "status": "",
         "logs": []
       }
@@ -189,7 +201,13 @@
         "arguments": []
       },
       "expect": {
-        "out": ["biguint:150|biguint:100|biguint:50,000000"],
+        "out": [
+          {
+            "0token1_amount": "biguint:150",
+            "1token2_amount": "biguint:100",
+            "2shares_amount": "biguint:50,000000"
+          }
+        ],
         "status": "",
         "logs": []
       }
@@ -256,7 +274,13 @@
         "arguments": []
       },
       "expect": {
-        "out": ["biguint:175|biguint:150|biguint:25,000000"],
+        "out": [
+          {
+            "0token1_amount": "biguint:175",
+            "1token2_amount": "biguint:150",
+            "2shares_amount": "biguint:25,000000"
+          }
+        ],
         "status": "",
         "logs": []
       }

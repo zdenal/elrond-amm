@@ -18,11 +18,13 @@ erdpy contract test
 # Interaction (deploy, querying, ...)
 In examples is proxy set to https://devnet-gateway.elrond.com, change it if you want to work
 with different chain
+
 ## For deploy
 Run interaction python script w/o `--contract` address arg and chose `1. Deploy`
 ```
 python3 ./interaction/playground.py --pem=./wallet/walletKey.pem --proxy=https://devnet-gateway.elrond.com --contract erd1qqqqqqqqqqqqqpgqmq04sd9355zryhek7lly4a4sspxdwwg453ds53uesn
 ```
+
 ## Once contract is deployed
 Once contract is deployed run interaction script w/ contract address you got from deploy step.
 The contract is already deployed on address `erd1qqqqqqqqqqqqqpgqmq04sd9355zryhek7lly4a4sspxdwwg453ds53uesn`

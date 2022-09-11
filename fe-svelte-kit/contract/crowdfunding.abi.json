@@ -10,7 +10,7 @@
         "contractCrate": {
             "name": "crowdfunding",
             "version": "0.0.0",
-            "git_version": "e0427db-modified"
+            "git_version": "3f8ab10-modified"
         },
         "framework": {
             "name": "elrond-wasm",
@@ -59,7 +59,7 @@
             "inputs": [],
             "outputs": [
                 {
-                    "type": "tuple<BigUint,BigUint,BigUint>"
+                    "type": "Holding"
                 }
             ]
         },
@@ -116,6 +116,23 @@
     "events": [],
     "hasCallback": false,
     "types": {
+        "Holding": {
+            "type": "struct",
+            "fields": [
+                {
+                    "name": "token1_amount",
+                    "type": "BigUint"
+                },
+                {
+                    "name": "token2_amount",
+                    "type": "BigUint"
+                },
+                {
+                    "name": "shares_amount",
+                    "type": "BigUint"
+                }
+            ]
+        },
         "PoolDetail": {
             "type": "struct",
             "fields": [

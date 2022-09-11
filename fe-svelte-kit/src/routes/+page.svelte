@@ -3,7 +3,7 @@
   export let data;
 
   import { Modals, closeModal, openModal } from 'svelte-modals'
-  import {provider} from '../stores.js';
+  import {provider, myHoldings} from '../stores.js';
 
   import WalletConnect from "./../components/WalletConnect.svelte";
 
@@ -37,15 +37,15 @@
     <dl class="sm:divide-y sm:divide-gray-200">
       <div class="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4">
         <dt class="text-sm font-medium text-gray-500">Amount of Token1</dt>
-        <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">....</dd>
+        <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{$myHoldings ? $myHoldings.token1Amount : '...'}</dd>
       </div>
       <div class="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4">
         <dt class="text-sm font-medium text-gray-500">Amount of Token2</dt>
-        <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">...</dd>
+        <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{$myHoldings ? $myHoldings.token2Amount : '...'}</dd>
       </div>
       <div class="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4">
         <dt class="text-sm font-medium text-gray-500">Amount of share</dt>
-        <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">...</dd>
+        <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{$myHoldings ? $myHoldings.sharesAmount : '...'}</dd>
       </div>
     </dl>
   </div>

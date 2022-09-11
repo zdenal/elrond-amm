@@ -10,7 +10,7 @@
     await extProvider.init();
     await extProvider.login();
 
-    console.log("Account:", extProvider.account);
+    /*console.log("Account:", extProvider.account);*/
     provider.set(extProvider);
     closeModal();
   }

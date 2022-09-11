@@ -82,14 +82,18 @@ pub trait Adder {
     }
 
     #[view(getMyHoldings)]
-    fn get_my_holdings(&self) -> (BigUint, BigUint, BigUint) {
+    fn get_my_holdings(&self) -> Holding<Self::Api> {
         let caller = self.blockchain().get_caller();
 
         let token1_amount = self.token1_accounts().get(&caller).unwrap_or(BigUint::zero());
         let token2_amount = self.token2_accounts().get(&caller).unwrap_or(BigUint::zero());
         let shares_amount = self.shares().get(&caller).unwrap_or(BigUint::zero());
 
-        (token1_amount, token2_amount, shares_amount)
+        Holding {
+            token1_amount,
+            token2_amount,
+            shares_amount
+        }
     }
 
     #[endpoint]
