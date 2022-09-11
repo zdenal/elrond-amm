@@ -1,11 +1,13 @@
 import { ProxyNetworkProvider } from '@elrondnetwork/erdjs-network-providers';
 import {
 	Address,
+	Account,
 	SmartContractAbi,
 	AbiRegistry,
 	SmartContract,
 	ContractFunction,
-	ResultsParser
+	ResultsParser,
+	BigIntValue
 } from '@elrondnetwork/erdjs';
 
 import contractAbiJson from '../contract/crowdfunding.abi.json';
@@ -74,20 +76,28 @@ export async function getMyHoldings({ address, contract, networkProvider }) {
 	};
 }
 
-export async function faucet({ token1Amount, token2Amount, address, contract, networkProvider }) {
+export async function faucet({
+	token1Amount,
+	token2Amount,
+	contract,
+	provider,
+	networkProvider,
+	networkConfig
+}) {
 	const functionName = 'faucet';
-	const query = contract.createQuery({
+	const caller = new Address(provider.account.address);
+	const accountOnNetwork = await networkProvider.getAccount(caller);
+	console.log(accountOnNetwork);
+	const tx = contract.call({
 		func: new ContractFunction(functionName),
-		caller: new Address(address),
-		args: [token1Amount, token2Amount]
+		gasLimit: networkConfig.MinGasLimit + 3000000,
+		chainID: networkConfig.ChainID,
+		caller: caller,
+		args: [new BigIntValue(token1Amount), new BigIntValue(token2Amount)]
 	});
-	const endpointDefinition = contract.getEndpoint(functionName);
+	tx.setNonce(accountOnNetwork.nonce);
+	const signedTx = await provider.signTransaction(tx);
+	const hash = await networkProvider.sendTransaction(signedTx);
 
-	const queryResponse = await networkProvider.queryContract(query);
-	const { firstValue, secondValue, returnCode } = parser.parseQueryResponse(
-		queryResponse,
-		endpointDefinition
-	);
-
-	return ReturnCode;
+	return hash;
 }
