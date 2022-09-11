@@ -2,6 +2,8 @@
   import { form, field } from 'svelte-forms';
   import { required } from 'svelte-forms/validators';
   import { TransactionWatcher, TransactionHash } from '@elrondnetwork/erdjs';
+  import { getNotificationsContext } from 'svelte-notifications';
+
   import { faucet } from '../../contract';
   import { provider, contractData } from '../../stores';
   import AmountInput from "../../components/AmountInput.svelte";
@@ -9,6 +11,7 @@
 
   export let data;
 
+  const { addNotification } = getNotificationsContext();
 
   const token1Amount = field('token1Amount', 50, [required()]);
   const token2Amount = field('token2Amount', 50, [required()]);
@@ -17,11 +20,13 @@
   async function handleFaucet() {
     if($provider) {
       const txHash = await faucet({token1Amount: $token1Amount.value, token2Amount: $token2Amount.value, provider: $provider, ...data.contractData})
+      addNotification({text: "Transaction send", position: "top-right", removeAfter: 2000})
       console.log("hash: ", txHash);
       let watcher = new TransactionWatcher($contractData.networkProvider);
       watcher.awaitCompleted({ getHash: () => new TransactionHash(txHash) }).then(res => {
         console.log("Tx watcher result", res);
         loadHoldings($provider, $contractData);
+        addNotification({text: "Transaction success", position: "top-right", type: "success", removeAfter: 2000})
       });
     } else {
       console.warn('Provider not set');
