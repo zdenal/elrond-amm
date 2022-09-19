@@ -11,6 +11,7 @@ import {
 } from '@elrondnetwork/erdjs';
 
 import contractAbiJson from '../contract/crowdfunding.abi.json';
+import { PRECISION } from './utils';
 
 const parser = new ResultsParser();
 
@@ -100,4 +101,50 @@ export async function faucet({
 	const hash = await networkProvider.sendTransaction(signedTx);
 
 	return hash;
+}
+
+export async function provide({
+	token1Amount,
+	token2Amount,
+	contract,
+	provider,
+	networkProvider,
+	networkConfig
+}) {
+	const functionName = 'provide';
+	const caller = new Address(provider.account.address);
+	const accountOnNetwork = await networkProvider.getAccount(caller);
+	const tx = contract.call({
+		func: new ContractFunction(functionName),
+		gasLimit: networkConfig.MinGasLimit + 3100000,
+		chainID: networkConfig.ChainID,
+		caller: caller,
+		args: [new BigIntValue(token1Amount), new BigIntValue(token2Amount)]
+	});
+	tx.setNonce(accountOnNetwork.nonce);
+	const signedTx = await provider.signTransaction(tx);
+	const hash = await networkProvider.sendTransaction(signedTx);
+
+	return hash;
+}
+
+export async function getWithdrawEstimate({ shareAmount, contract, networkProvider }) {
+	const functionName = 'getWithdrawEstimate';
+	const query = contract.createQuery({
+		func: new ContractFunction(functionName),
+		args: [new BigIntValue(shareAmount * PRECISION)]
+	});
+	const endpointDefinition = contract.getEndpoint(functionName);
+
+	const queryResponse = await networkProvider.queryContract(query);
+	const { firstValue, secondValue, returnCode } = parser.parseQueryResponse(
+		queryResponse,
+		endpointDefinition
+	);
+	console.log(firstValue, secondValue, returnCode);
+
+	return {
+		token1Amount: firstValue?.fields[0].value.value.toNumber() || 0,
+		token2Amount: firstValue?.fields[1].value.value.toNumber() || 0
+	};
 }

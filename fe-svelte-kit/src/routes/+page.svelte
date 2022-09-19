@@ -1,72 +1,71 @@
 <script>
-  /** @type {import('./$types').PageData} */
-  export let data;
+	/** @type {import('./$types').PageData} */
+	export let data;
 
-  import { openModal } from 'svelte-modals'
-  import {provider} from '../stores.js';
-  import {myHoldings} from '../store/myHoldings';
+	import { openModal } from 'svelte-modals';
+	import { provider } from '../stores.js';
+	import { toDecimal } from '../utils.js';
+	import { myHoldings } from '../store/myHoldings';
 
-  import WalletConnect from "./../components/WalletConnect.svelte";
+	import { ActionButton, WalletConnect, Table, Row } from '../components';
 
-  function handleClick() {
-      openModal(WalletConnect, {provider})
-  }
+	function handleClick() {
+		openModal(WalletConnect, { provider });
+	}
 </script>
 
 <div>
-  <div class="mb-6">
-    <div class="flex justify-between">
-      <h3 class="text-2xl leading-6 font-medium text-gray-900">Account Information</h3>
-      {#if !$provider}
-        <button on:click={handleClick} type="button" class="justify-center inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-1 text-base font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2">
-          Connect
-        </button>
-      {/if}
-    </div>
-    {#if $provider}
-      <p class="mt-1 max-w-2xl text-sm text-gray-500">{$provider.account.address}</p>
-    {/if}
-  </div>
-  <div>
-    <h3 class="text-lg leading-6 font-medium text-gray-900">Assets</h3>
-  </div>
-  <div class="mt-5 border-t border-gray-200 mb-6">
-    <dl class="sm:divide-y sm:divide-gray-200">
-      <div class="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4">
-        <dt class="text-sm font-medium text-gray-500">Amount of Token1</dt>
-        <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{$myHoldings ? $myHoldings.token1Amount : '...'}</dd>
-      </div>
-      <div class="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4">
-        <dt class="text-sm font-medium text-gray-500">Amount of Token2</dt>
-        <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{$myHoldings ? $myHoldings.token2Amount : '...'}</dd>
-      </div>
-      <div class="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4">
-        <dt class="text-sm font-medium text-gray-500">Amount of share</dt>
-        <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{$myHoldings ? $myHoldings.sharesAmount : '...'}</dd>
-      </div>
-    </dl>
-  </div>
-  <div>
-    <h4 class="text-lg leading-6 font-medium text-gray-900">Pool Details</h4>
-  </div>
-  <div class="mt-5 border-t border-gray-200">
-    <dl class="sm:divide-y sm:divide-gray-200">
-      <div class="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4">
-        <dt class="text-sm font-medium text-gray-500">Total Token1</dt>
-        <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{data.token1Total}</dd>
-      </div>
-      <div class="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4">
-        <dt class="text-sm font-medium text-gray-500">Total Token2</dt>
-        <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{data.token2Total}</dd>
-      </div>
-      <div class="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4">
-        <dt class="text-sm font-medium text-gray-500">Total Share</dt>
-        <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{data.sharesTotal}</dd>
-      </div>
-      <div class="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4">
-        <dt class="text-sm font-medium text-gray-500">Trading Fee</dt>
-        <dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{data.fee}%</dd>
-      </div>
-    </dl>
-  </div>
+	<div class="mb-6">
+		<div class="flex justify-between">
+			<h3 class="text-2xl leading-6 font-medium text-gray-900">Account Information</h3>
+			{#if !$provider}
+				<button
+					on:click={handleClick}
+					type="button"
+					class="justify-center inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-1 text-base font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
+				>
+					Connect
+				</button>
+			{/if}
+		</div>
+		{#if $provider}
+			<p class="mt-1 max-w-2xl text-sm text-gray-500">{$provider.account.address}</p>
+		{/if}
+	</div>
+	<div>
+		<h3 class="text-lg leading-6 font-medium text-gray-900">Assets</h3>
+	</div>
+	<div>
+		<Table>
+			<Row title="Amount of Token1">
+				{$myHoldings ? $myHoldings.token1Amount : '...'}
+			</Row>
+			<Row title="Amount of Token2">
+				{$myHoldings ? $myHoldings.token2Amount : '...'}
+			</Row>
+			<Row title="Amount of Shares">
+				{$myHoldings ? toDecimal($myHoldings.sharesAmount) : '...'}
+			</Row>
+		</Table>
+	</div>
+
+	<div>
+		<h4 class="text-lg leading-6 font-medium text-gray-900">Pool Details</h4>
+	</div>
+	<div>
+		<Table>
+			<Row title="Total Token1">
+				{data.token1Total}
+			</Row>
+			<Row title="Total Token2">
+				{data.token2Total}
+			</Row>
+			<Row title="Total Share">
+				{toDecimal(data.sharesTotal)}
+			</Row>
+			<Row title="Trading Fee">
+				{data.fee}%
+			</Row>
+		</Table>
+	</div>
 </div>

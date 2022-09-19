@@ -38,6 +38,7 @@ You can preview the production build with `npm run preview`.
 > To deploy your app, you may need to install an [adapter](https://kit.svelte.dev/docs/adapters) for your target environment.
 
 ## FE svelte
-### FOR SOME ANOTHER ISSUE WITH NODE MODULE CHECK THIS:
-https://stackoverflow.com/questions/69286329/polyfill-node-os-module-with-vite-rollup-js
 
+### FOR SOME ANOTHER ISSUE WITH NODE MODULE CHECK THIS:
+
+https://stackoverflow.com/questions/69286329/polyfill-node-os-module-with-vite-rollup-js
