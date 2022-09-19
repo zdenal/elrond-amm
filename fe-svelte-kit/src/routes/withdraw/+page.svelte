@@ -1,24 +1,62 @@
 <script>
 	import { form, field } from 'svelte-forms';
 	import { required, min } from 'svelte-forms/validators';
+	import { TransactionWatcher, TransactionHash } from '@elrondnetwork/erdjs';
 	import { debounce } from 'lodash';
+	import { getNotificationsContext } from 'svelte-notifications';
 
-	import { getWithdrawEstimate } from '../../contract';
+	import { getWithdrawEstimate, withdraw } from '../../contract';
 	import { Title, ActionButton, AmountInput, Table, Row } from '../../components';
 	import { provider, contractData } from '../../stores';
-	import { myHoldings } from '../../store/myHoldings';
+	import { myHoldings, load as loadHoldings } from '../../store/myHoldings';
 	import { toDecimal } from '../../utils';
 
 	export let data;
 
-	const shareAmount = field('shareAmount', 0, [required(), min(1)]);
+	const shareAmount = field('shareAmount', undefined, [required(), min(1)]);
 	const myForm = form(shareAmount);
 
 	let estimatedToken1Amount = '...';
 	let estimatedToken2Amount = '...';
 
-	function handleWithdraw() {}
+	$: myBalance = $myHoldings ? toDecimal($myHoldings.sharesAmount) : undefined;
+	const { addNotification } = getNotificationsContext();
+
+	async function handleWithdraw() {
+		const txHash = await withdraw({
+			shareAmount: $shareAmount.value,
+			provider: $provider,
+			...data.contractData
+		});
+		addNotification({ text: 'Transaction send', position: 'top-right', removeAfter: 2000 });
+
+		let watcher = new TransactionWatcher($contractData.networkProvider);
+		watcher.awaitCompleted({ getHash: () => new TransactionHash(txHash) }).then((res) => {
+			console.log('Tx watcher result', res);
+			if (res.contractResults.items.length > 0) {
+				loadHoldings($provider, $contractData);
+				addNotification({
+					text: 'Transaction success',
+					position: 'top-right',
+					type: 'success',
+					removeAfter: 2000
+				});
+			} else {
+				addNotification({
+					text: 'Transaction failed',
+					position: 'top-right',
+					type: 'error',
+					removeAfter: 2000
+				});
+			}
+		});
+	}
+
 	async function getEstimation() {
+		if ($shareAmount.value > myBalance) {
+			await shareAmount.set(myBalance);
+		}
+
 		const estimate = await getWithdrawEstimate({
 			shareAmount: $shareAmount.value,
 			...data.contractData
@@ -27,6 +65,7 @@
 		estimatedToken1Amount = estimate.token1Amount;
 		estimatedToken2Amount = estimate.token2Amount;
 	}
+
 	const handleTyping = debounce(getEstimation, 500);
 </script>
 
@@ -39,7 +78,7 @@
 			bind:value={$shareAmount.value}
 			label="Amount of Shares"
 			onTyping={handleTyping}
-			currencyName="Balance: {$myHoldings ? toDecimal($myHoldings.sharesAmount) : '...'}"
+			currencyName="Balance: {myBalance || '...'}"
 		/>
 	</div>
 	<div class="flex flex-col items-center">

@@ -148,3 +148,27 @@ export async function getWithdrawEstimate({ shareAmount, contract, networkProvid
 		token2Amount: firstValue?.fields[1].value.value.toNumber() || 0
 	};
 }
+
+export async function withdraw({
+	shareAmount,
+	contract,
+	provider,
+	networkProvider,
+	networkConfig
+}) {
+	const functionName = 'withdraw';
+	const caller = new Address(provider.account.address);
+	const accountOnNetwork = await networkProvider.getAccount(caller);
+	const tx = contract.call({
+		func: new ContractFunction(functionName),
+		gasLimit: networkConfig.MinGasLimit + 3100000,
+		chainID: networkConfig.ChainID,
+		caller: caller,
+		args: [new BigIntValue(shareAmount * PRECISION)]
+	});
+	tx.setNonce(accountOnNetwork.nonce);
+	const signedTx = await provider.signTransaction(tx);
+	const hash = await networkProvider.sendTransaction(signedTx);
+
+	return hash;
+}
