@@ -10,7 +10,7 @@ import {
 	BigIntValue
 } from '@elrondnetwork/erdjs';
 
-import contractAbiJson from '../contract/crowdfunding.abi.json';
+import contractAbiJson from '../contract/amm.abi.json';
 import { PRECISION } from './utils';
 
 const parser = new ResultsParser();
@@ -33,19 +33,12 @@ export async function init() {
 }
 
 export async function getPoolDetail({ contract, networkProvider }) {
-	const functionName = 'getPoolDetail';
-	const query = contract.createQuery({
-		func: new ContractFunction(functionName),
-		args: []
+	const { firstValue, secondValue, returnCode } = await makeQuery({
+		functionName: 'getPoolDetail',
+		args: [],
+		contract,
+		networkProvider
 	});
-
-	const endpointDefinition = contract.getEndpoint(functionName);
-
-	const queryResponse = await networkProvider.queryContract(query);
-	const { firstValue, secondValue, returnCode } = parser.parseQueryResponse(
-		queryResponse,
-		endpointDefinition
-	);
 
 	return {
 		fee: firstValue.fieldsByName.get('fee').value.value.toNumber(),
@@ -56,19 +49,13 @@ export async function getPoolDetail({ contract, networkProvider }) {
 }
 
 export async function getMyHoldings({ address, contract, networkProvider }) {
-	const functionName = 'getMyHoldings';
-	const query = contract.createQuery({
-		func: new ContractFunction(functionName),
+	const { firstValue, secondValue, returnCode } = await makeQuery({
+		functionName: 'getMyHoldings',
 		caller: new Address(address),
-		args: []
+		args: [],
+		contract,
+		networkProvider
 	});
-	const endpointDefinition = contract.getEndpoint(functionName);
-
-	const queryResponse = await networkProvider.queryContract(query);
-	const { firstValue, secondValue, returnCode } = parser.parseQueryResponse(
-		queryResponse,
-		endpointDefinition
-	);
 
 	return {
 		token1Amount: firstValue.fieldsByName.get('token1_amount').value.value.toNumber(),
@@ -85,22 +72,15 @@ export async function faucet({
 	networkProvider,
 	networkConfig
 }) {
-	const functionName = 'faucet';
-	const caller = new Address(provider.account.address);
-	const accountOnNetwork = await networkProvider.getAccount(caller);
-	console.log(accountOnNetwork);
-	const tx = contract.call({
-		func: new ContractFunction(functionName),
+	return await makeCall({
+		functionName: 'faucet',
 		gasLimit: networkConfig.MinGasLimit + 3000000,
-		chainID: networkConfig.ChainID,
-		caller: caller,
-		args: [new BigIntValue(token1Amount), new BigIntValue(token2Amount)]
+		args: [new BigIntValue(token1Amount), new BigIntValue(token2Amount)],
+		contract,
+		provider,
+		networkProvider,
+		networkConfig
 	});
-	tx.setNonce(accountOnNetwork.nonce);
-	const signedTx = await provider.signTransaction(tx);
-	const hash = await networkProvider.sendTransaction(signedTx);
-
-	return hash;
 }
 
 export async function provide({
@@ -111,37 +91,24 @@ export async function provide({
 	networkProvider,
 	networkConfig
 }) {
-	const functionName = 'provide';
-	const caller = new Address(provider.account.address);
-	const accountOnNetwork = await networkProvider.getAccount(caller);
-	const tx = contract.call({
-		func: new ContractFunction(functionName),
+	return await makeCall({
+		functionName: 'provide',
 		gasLimit: networkConfig.MinGasLimit + 3100000,
-		chainID: networkConfig.ChainID,
-		caller: caller,
-		args: [new BigIntValue(token1Amount), new BigIntValue(token2Amount)]
+		args: [new BigIntValue(token1Amount), new BigIntValue(token2Amount)],
+		contract,
+		provider,
+		networkProvider,
+		networkConfig
 	});
-	tx.setNonce(accountOnNetwork.nonce);
-	const signedTx = await provider.signTransaction(tx);
-	const hash = await networkProvider.sendTransaction(signedTx);
-
-	return hash;
 }
 
 export async function getWithdrawEstimate({ shareAmount, contract, networkProvider }) {
-	const functionName = 'getWithdrawEstimate';
-	const query = contract.createQuery({
-		func: new ContractFunction(functionName),
-		args: [new BigIntValue(shareAmount * PRECISION)]
+	const { firstValue, secondValue, returnCode } = await makeQuery({
+		functionName: 'getWithdrawEstimate',
+		args: [new BigIntValue(shareAmount * PRECISION)],
+		contract,
+		networkProvider
 	});
-	const endpointDefinition = contract.getEndpoint(functionName);
-
-	const queryResponse = await networkProvider.queryContract(query);
-	const { firstValue, secondValue, returnCode } = parser.parseQueryResponse(
-		queryResponse,
-		endpointDefinition
-	);
-	console.log(firstValue, secondValue, returnCode);
 
 	return {
 		token1Amount: firstValue?.fields[0].value.value.toNumber() || 0,
@@ -156,15 +123,42 @@ export async function withdraw({
 	networkProvider,
 	networkConfig
 }) {
-	const functionName = 'withdraw';
+	return await makeCall({
+		functionName: 'withdraw',
+		gasLimit: networkConfig.MinGasLimit + 3100000,
+		args: [new BigIntValue(shareAmount * PRECISION)],
+		contract,
+		provider,
+		networkProvider,
+		networkConfig
+	});
+}
+
+async function makeQuery({ functionName, contract, args, caller, networkProvider }) {
+	const query = contract.createQuery({ func: new ContractFunction(functionName), args, caller });
+	const endpointDefinition = contract.getEndpoint(functionName);
+
+	const queryResponse = await networkProvider.queryContract(query);
+	return parser.parseQueryResponse(queryResponse, endpointDefinition);
+}
+
+async function makeCall({
+	functionName,
+	gasLimit,
+	args,
+	contract,
+	provider,
+	networkProvider,
+	networkConfig
+}) {
 	const caller = new Address(provider.account.address);
 	const accountOnNetwork = await networkProvider.getAccount(caller);
 	const tx = contract.call({
 		func: new ContractFunction(functionName),
-		gasLimit: networkConfig.MinGasLimit + 3100000,
 		chainID: networkConfig.ChainID,
-		caller: caller,
-		args: [new BigIntValue(shareAmount * PRECISION)]
+		gasLimit,
+		caller,
+		args
 	});
 	tx.setNonce(accountOnNetwork.nonce);
 	const signedTx = await provider.signTransaction(tx);
