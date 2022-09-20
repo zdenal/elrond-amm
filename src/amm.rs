@@ -50,12 +50,7 @@ pub trait Adder {
 
     #[init]
     fn init(&self, fee: BigUint) {
-        let caller = self.blockchain().get_caller();
-
         self.fee().set(fee);
-        self.shares().insert(caller.clone(), BigUint::zero());
-        self.token1_accounts().insert(caller.clone(), BigUint::zero());
-        self.token2_accounts().insert(caller.clone(), BigUint::zero());
 
         let detail = PoolDetail {
             token1_total: BigUint::zero(),
@@ -64,7 +59,7 @@ pub trait Adder {
             fee: self.fee().get()
         };
 
-        self.pool_detail().set(detail);
+        self.pool_detail().set_if_empty(detail);
     }
 
     #[endpoint]

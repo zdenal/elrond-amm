@@ -69,7 +69,7 @@ if __name__ == '__main__':
             owner=user,
             arguments=["0x0005"],
             gas_price=network.min_gas_price,
-            gas_limit=5583219,
+            gas_limit=600000000,
             value=0,
             chain=network.chain_id,
             version=network.min_tx_version
