@@ -1,6 +1,6 @@
 {
-  "name": "crowdfunding",
-  "comment": "add then check",
+  "name": "init",
+  "comment": "init then check",
   "gasSchedule": "v3",
   "steps": [
     {
@@ -9,6 +9,10 @@
         "address:owner": {
           "nonce": "1",
           "balance": "0"
+        },
+        "address:zdenko": {
+          "nonce": "1",
+          "balance": "100"
         }
       },
       "newAddresses": [
@@ -26,7 +30,7 @@
         "from": "address:owner",
         "contractCode": "file:../output/crowdfunding.wasm",
         "arguments": ["5"],
-        "gasLimit": "5,000,000",
+        "gasLimit": "16,000,000",
         "gasPrice": "0"
       },
       "expect": {
@@ -39,54 +43,35 @@
     },
     {
       "step": "scQuery",
+      "comment": "Faucet Adderr's address",
       "txId": "2",
       "tx": {
         "to": "sc:adder",
-        "function": "getFee",
-        "arguments": []
+        "function": "faucet",
+        "arguments": ["100", "200"]
       },
       "expect": {
-        "out": ["5"],
-        "status": "",
+        "out": [],
+        "status": "0",
         "logs": []
       }
     },
     {
-      "step": "scCall",
+      "step": "scQuery",
+      "comment": "Adder provide to pool more than he has",
       "txId": "3",
       "tx": {
-        "from": "address:owner",
         "to": "sc:adder",
-        "function": "add",
-        "arguments": ["3"],
-        "gasLimit": "5,000,000",
-        "gasPrice": "0"
+        "function": "provide",
+        "arguments": ["101", "20"]
       },
       "expect": {
         "out": [],
-        "status": "",
+        "status": "4",
+        "message": "str:Insufficient Token1 amount",
         "logs": "*",
         "gas": "*",
         "refund": "*"
-      }
-    },
-    {
-      "step": "checkState",
-      "accounts": {
-        "address:owner": {
-          "nonce": "*",
-          "balance": "0",
-          "storage": {},
-          "code": ""
-        },
-        "sc:adder": {
-          "nonce": "0",
-          "balance": "0",
-          "storage": {
-            "str:sum": "8"
-          },
-          "code": "file:../output/crowdfunding.wasm"
-        }
       }
     }
   ]

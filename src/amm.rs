@@ -98,7 +98,12 @@ pub trait Adder {
 
     #[endpoint]
     fn provide(&self, token1_amount: BigUint, token2_amount: BigUint) -> BigUint {
-        // TODO: check available amount for tokens
+        let caller = self.blockchain().get_caller();
+        let holdings = self.get_my_holdings();
+
+        require!(holdings.token1_amount >= token1_amount, "Insufficient Token1 amount");
+        require!(holdings.token2_amount >= token2_amount, "Insufficient Token2 amount");
+
         let detail = self.pool_detail().get();
         let shares_total = detail.shares_total;
         let token1_total = detail.token1_total;
@@ -115,8 +120,6 @@ pub trait Adder {
         };
 
         require!(share != 0, "Threshold not reached");
-
-        let caller = self.blockchain().get_caller();
 
         self.token1_accounts()
             .entry(caller.clone())

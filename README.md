@@ -10,6 +10,7 @@ pnpm run dev
 # Tests
 
 Run test:
+NOTE: only my local ... if there is issue with compiling contract (`..unknown command: cargo.`) remove rust from `asdf` as it is in some collision w/ rustup.
 ```
 erdpy contract build
 erdpy contract test
