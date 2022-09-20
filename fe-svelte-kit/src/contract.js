@@ -93,7 +93,7 @@ export async function provide({
 }) {
 	return await makeCall({
 		functionName: 'provide',
-		gasLimit: networkConfig.MinGasLimit + 3100000,
+		gasLimit: networkConfig.MinGasLimit + 3500000,
 		args: [new BigIntValue(token1Amount), new BigIntValue(token2Amount)],
 		contract,
 		provider,
@@ -114,6 +114,28 @@ export async function getWithdrawEstimate({ shareAmount, contract, networkProvid
 		token1Amount: firstValue?.fields[0].value.value.toNumber() || 0,
 		token2Amount: firstValue?.fields[1].value.value.toNumber() || 0
 	};
+}
+
+export async function getToken2ProvideEstimate({ token1Amount, contract, networkProvider }) {
+	const { firstValue, secondValue, returnCode } = await makeQuery({
+		functionName: 'getToken2ProvideEstimate',
+		args: [new BigIntValue(token1Amount)],
+		contract,
+		networkProvider
+	});
+
+	return firstValue?.value.toNumber() || 0;
+}
+
+export async function getToken1ProvideEstimate({ token2Amount, contract, networkProvider }) {
+	const { firstValue, secondValue, returnCode } = await makeQuery({
+		functionName: 'getToken1ProvideEstimate',
+		args: [new BigIntValue(token2Amount)],
+		contract,
+		networkProvider
+	});
+
+	return firstValue?.value.toNumber() || 0;
 }
 
 export async function withdraw({
