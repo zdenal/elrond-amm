@@ -96,6 +96,22 @@ pub trait Adder {
         }
     }
 
+    #[view(getToken1ProvideEstimate)]
+    fn get_token1_provide_estimate(&self, token2_amount: BigUint) -> BigUint {
+        let pool_detail = self.pool_detail().get();
+        require!(&pool_detail.token1_total * &pool_detail.token2_total > 0, "Zero liquidity in pool");
+
+        pool_detail.token1_total * token2_amount / pool_detail.token2_total
+    }
+
+    #[view(getToken2ProvideEstimate)]
+    fn get_token2_provide_estimate(&self, token1_amount: BigUint) -> BigUint {
+        let pool_detail = self.pool_detail().get();
+        require!(&pool_detail.token1_total * &pool_detail.token2_total > 0, "Zero liquidity in pool");
+
+        pool_detail.token2_total * token1_amount / pool_detail.token1_total
+    }
+
     #[endpoint]
     fn provide(&self, token1_amount: BigUint, token2_amount: BigUint) -> BigUint {
         let caller = self.blockchain().get_caller();

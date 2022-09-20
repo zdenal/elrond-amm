@@ -73,6 +73,57 @@
         "gas": "*",
         "refund": "*"
       }
+    },
+    {
+      "step": "scQuery",
+      "comment": "provide to pool",
+      "txId": "4",
+      "tx": {
+        "to": "sc:adder",
+        "function": "provide",
+        "arguments": ["100", "50"]
+      },
+      "expect": {
+        "out": ["100,000000"],
+        "status": "0",
+        "logs": "*",
+        "gas": "*",
+        "refund": "*"
+      }
+    },
+    {
+      "step": "scQuery",
+      "comment": "get token1 estimate for providing (2 times more than token2 provided (100 - 50)",
+      "txId": "5",
+      "tx": {
+        "to": "sc:adder",
+        "function": "getToken1ProvideEstimate",
+        "arguments": ["10"]
+      },
+      "expect": {
+        "out": ["20"],
+        "status": "0",
+        "logs": "*",
+        "gas": "*",
+        "refund": "*"
+      }
+    },
+    {
+      "step": "scQuery",
+      "comment": "get token2 estimate for providing (2 times less than token1 provided (100 - 50)",
+      "txId": "5",
+      "tx": {
+        "to": "sc:adder",
+        "function": "getToken2ProvideEstimate",
+        "arguments": ["10"]
+      },
+      "expect": {
+        "out": ["5"],
+        "status": "0",
+        "logs": "*",
+        "gas": "*",
+        "refund": "*"
+      }
     }
   ]
 }

@@ -10,6 +10,8 @@ elrond_wasm_node::wasm_endpoints! {
         faucet
         getMyHoldings
         getPoolDetail
+        getToken1ProvideEstimate
+        getToken2ProvideEstimate
         getWithdrawEstimate
         provide
         withdraw
