@@ -3,10 +3,11 @@ from argparse import ArgumentParser
 from pathlib import Path
 
 from erdpy import config
-from erdpy.accounts import Account
-from erdpy.contracts import SmartContract
+from erdpy.accounts import Account, Address
+from erdpy.contracts import CodeMetadata, SmartContract
 from erdpy.projects import ProjectRust
 from erdpy.proxy import ElrondProxy
+from erdpy import utils
 
 logger = logging.getLogger("examples")
 
@@ -55,6 +56,29 @@ if __name__ == '__main__':
         logger.info("Tx hash: %s", tx_on_network.get_hash())
         logger.info("Contract address: %s", contract.address.bech32())
 
+    def do_upgrade():
+        contract_address = Address(input("Contract address: "))
+        bytecode_path = Path(input("Path to WASM: ")).absolute()
+        bytecode = utils.read_binary_file(bytecode_path).hex()
+        code_metadata = CodeMetadata(upgradeable=True)
+        contract = SmartContract(address=contract_address, bytecode=bytecode, metadata=code_metadata)
+
+        user.sync_nonce(proxy)
+
+        tx = contract.upgrade(
+            owner=user,
+            arguments=["0x0005"],
+            gas_price=network.min_gas_price,
+            gas_limit=5583219,
+            value=0,
+            chain=network.chain_id,
+            version=network.min_tx_version
+        )
+
+        tx_on_network = tx.send_wait_result(proxy, 5000)
+
+        logger.info(f"Upgrade transaction: {tx_on_network.get_hash()}")
+
     def get_pool_detail_flow():
         answer = contract.query(proxy, "getPoolDetail", [])
         logger.info(f"Answer: {answer}")
@@ -81,6 +105,7 @@ if __name__ == '__main__':
         print("1. Deploy")
         print("2. Query getPoolDetail()")
         print("3. Add()")
+        print("4. Upgrade")
 
         try:
             choice = int(input("Choose:\n"))
@@ -95,4 +120,7 @@ if __name__ == '__main__':
         elif choice == 3:
             number = int(input("Enter number:"))
             add_flow(number)
+            user.nonce += 1
+        elif choice == 4:
+            do_upgrade()
             user.nonce += 1
