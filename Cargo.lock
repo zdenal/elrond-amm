@@ -14,6 +14,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "amm"
+version = "0.0.0"
+dependencies = [
+ "elrond-wasm",
+ "elrond-wasm-debug",
+]
+
+[[package]]
 name = "arrayvec"
 version = "0.7.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -83,14 +91,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "59a6001667ab124aebae2a495118e11d30984c3a653e99d86d58971708cf5e4b"
 dependencies = [
  "libc",
-]
-
-[[package]]
-name = "crowdfunding"
-version = "0.0.0"
-dependencies = [
- "elrond-wasm",
- "elrond-wasm-debug",
 ]
 
 [[package]]

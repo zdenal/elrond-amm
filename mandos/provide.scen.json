@@ -28,7 +28,7 @@
       "txId": "1",
       "tx": {
         "from": "address:owner",
-        "contractCode": "file:../output/crowdfunding.wasm",
+        "contractCode": "file:../output/amm.wasm",
         "arguments": ["5"],
         "gasLimit": "16,000,000",
         "gasPrice": "0"
