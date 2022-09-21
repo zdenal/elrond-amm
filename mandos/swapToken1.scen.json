@@ -47,11 +47,11 @@
       "txId": "2",
       "tx": {
         "to": "sc:adder",
+        "function": "faucet",
         "from": "address:zdenko",
         "gasLimit": "12,000,000",
         "gasPrice": "0",
-        "function": "faucet",
-        "arguments": ["100", "200"]
+        "arguments": ["2,000,000", "2,000,000"]
       },
       "expect": {
         "out": [],
@@ -61,36 +61,15 @@
     },
     {
       "step": "scCall",
-      "comment": "Adder provide to pool more than he has",
+      "comment": "provide to pool (rate 2 Token1 for 1 Token1)",
       "txId": "3",
       "tx": {
         "to": "sc:adder",
         "from": "address:zdenko",
-        "gasLimit": "10,000,000",
+        "gasLimit": "10,900,000",
         "gasPrice": "0",
         "function": "provide",
-        "arguments": ["101", "20"]
-      },
-      "expect": {
-        "out": [],
-        "status": "4",
-        "message": "str:Insufficient Token1 amount",
-        "logs": "*",
-        "gas": "*",
-        "refund": "*"
-      }
-    },
-    {
-      "step": "scCall",
-      "comment": "provide to pool",
-      "txId": "4",
-      "tx": {
-        "to": "sc:adder",
-        "from": "address:zdenko",
-        "gasLimit": "12,000,000",
-        "gasPrice": "0",
-        "function": "provide",
-        "arguments": ["100", "50"]
+        "arguments": ["1,000,000", "500,000"]
       },
       "expect": {
         "out": ["100,000000"],
@@ -101,16 +80,60 @@
       }
     },
     {
-      "step": "scQuery",
-      "comment": "get token1 estimate for providing (2 times more than token2 provided (100 - 50)",
+      "step": "scCall",
+      "comment": "estimate swap for 200.000 Token1",
+      "txId": "4",
+      "tx": {
+        "to": "sc:adder",
+        "from": "address:zdenko",
+        "gasLimit": "10,000,000",
+        "gasPrice": "0",
+        "function": "getSwapToken1Estimate",
+        "arguments": ["200,000"]
+      },
+      "expect": {
+        "out": ["82986"],
+        "status": "0",
+        "logs": "*",
+        "gas": "*",
+        "refund": "*"
+      }
+    },
+    {
+      "step": "scCall",
+      "comment": "swap 200.000 of Token1 .. return error of slippage",
       "txId": "5",
       "tx": {
         "to": "sc:adder",
-        "function": "getToken1ProvideEstimate",
-        "arguments": ["10"]
+        "from": "address:zdenko",
+        "gasLimit": "10,000,000",
+        "gasPrice": "0",
+        "function": "swapToken1",
+        "arguments": ["200,000", "100,000"]
       },
       "expect": {
-        "out": ["20"],
+        "out": [],
+        "message": "str:Slippage exceed",
+        "status": "4",
+        "logs": "*",
+        "gas": "*",
+        "refund": "*"
+      }
+    },
+    {
+      "step": "scCall",
+      "comment": "swap 200.000 of Token1",
+      "txId": "6",
+      "tx": {
+        "to": "sc:adder",
+        "from": "address:zdenko",
+        "gasLimit": "10,900,000",
+        "gasPrice": "0",
+        "function": "swapToken1",
+        "arguments": ["200,000", "82300"]
+      },
+      "expect": {
+        "out": ["82986"],
         "status": "0",
         "logs": "*",
         "gas": "*",
@@ -119,19 +142,43 @@
     },
     {
       "step": "scQuery",
-      "comment": "get token2 estimate for providing (2 times less than token1 provided (100 - 50)",
-      "txId": "5",
+      "comment": "Get pool detail",
+      "txId": "7",
       "tx": {
         "to": "sc:adder",
-        "function": "getToken2ProvideEstimate",
-        "arguments": ["10"]
+        "function": "getPoolDetail",
+        "arguments": []
       },
       "expect": {
-        "out": ["5"],
-        "status": "0",
-        "logs": "*",
-        "gas": "*",
-        "refund": "*"
+        "out": [
+          "biguint:1,200,000|biguint:417,014|biguint:100,000,000|biguint:5"
+        ],
+        "status": "",
+        "logs": []
+      }
+    },
+    {
+      "step": "scCall",
+      "comment": "Check holdings holdings, Token1: 1,000,000 - 200,000, Token2: 1,500,000 + 82,986",
+      "txId": "8",
+      "tx": {
+        "to": "sc:adder",
+        "from": "address:zdenko",
+        "gasLimit": "10,000,000",
+        "gasPrice": "0",
+        "function": "getMyHoldings",
+        "arguments": []
+      },
+      "expect": {
+        "out": [
+          {
+            "0token1_amount": "biguint:800,000",
+            "1token2_amount": "biguint:1,582,986",
+            "2shares_amount": "biguint:100,000,000"
+          }
+        ],
+        "status": "",
+        "logs": []
       }
     }
   ]

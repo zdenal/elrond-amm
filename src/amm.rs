@@ -166,6 +166,13 @@ pub trait Adder {
         self.swap_token1_estimate(&pool_detail, &token1_amount)
     }
 
+    #[view(getSwapToken2Estimate)]
+    fn get_swap_token2_estimate(&self, token2_amount: BigUint) -> BigUint {
+        let pool_detail = self.pool_detail().get();
+
+        self.swap_token2_estimate(&pool_detail, &token2_amount)
+    }
+
     #[endpoint(swapToken1)]
     fn swap_token1(&self, token1_amount: BigUint, min_token2_amount: BigUint) -> BigUint {
         let caller = self.blockchain().get_caller();
@@ -194,6 +201,36 @@ pub trait Adder {
 
         self.pool_detail().set(updated_pool_detail);
         token2_amount
+    }
+
+    #[endpoint(swapToken2)]
+    fn swap_token2(&self, token2_amount: BigUint, min_token1_amount: BigUint) -> BigUint {
+        let caller = self.blockchain().get_caller();
+        let holdings = self.get_my_holdings();
+        let pool_detail = self.pool_detail().get();
+
+        require!(&holdings.token2_amount >= &token2_amount, "Insufficient Token2 amount");
+
+        let token1_amount = self.swap_token2_estimate(&pool_detail, &token2_amount);
+
+        require!(&token1_amount > &min_token1_amount, "Slippage exceed");
+
+        self.token1_accounts()
+            .entry(caller.clone())
+            .and_modify(|value| *value += &token1_amount);
+
+        self.token2_accounts()
+            .entry(caller.clone())
+            .and_modify(|value| *value -= &token2_amount);
+
+        let updated_pool_detail = PoolDetail {
+            token1_total: &pool_detail.token1_total - &token1_amount,
+            token2_total: &pool_detail.token2_total + &token2_amount,
+            ..pool_detail
+        };
+
+        self.pool_detail().set(updated_pool_detail);
+        token1_amount
     }
 
     #[view(getWithdrawEstimate)]
@@ -241,5 +278,18 @@ pub trait Adder {
         let token1_total_after = &pool_detail.token1_total + &token1_amount_w_fee;
         let token2_total_after = k / &token1_total_after;
         &pool_detail.token2_total - &token2_total_after
+    }
+
+    fn swap_token2_estimate(&self, pool_detail: &PoolDetail<Self::Api>, token2_amount: &BigUint) -> BigUint {
+        require!(&pool_detail.token2_total >= token2_amount, "Insufficient liquidity");
+
+                                                                                    //
+        let k = &pool_detail.token1_total * &pool_detail.token2_total;
+        let token2_total_after = &pool_detail.token2_total + token2_amount;
+        let token1_total_after = k / &token2_total_after;
+        let token1_amount = &pool_detail.token1_total - &token1_total_after;
+
+        // token1 amount w/ fee
+        (&BigUint::from(1000u16) - &pool_detail.fee) * token1_amount / &BigUint::from(1000u16)
     }
 }

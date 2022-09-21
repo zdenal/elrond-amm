@@ -11,11 +11,13 @@ elrond_wasm_node::wasm_endpoints! {
         getMyHoldings
         getPoolDetail
         getSwapToken1Estimate
+        getSwapToken2Estimate
         getToken1ProvideEstimate
         getToken2ProvideEstimate
         getWithdrawEstimate
         provide
         swapToken1
+        swapToken2
         withdraw
     )
 }
