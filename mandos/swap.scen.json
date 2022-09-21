@@ -1,0 +1,167 @@
+{
+  "name": "init",
+  "comment": "init then check",
+  "gasSchedule": "v3",
+  "steps": [
+    {
+      "step": "setState",
+      "accounts": {
+        "address:owner": {
+          "nonce": "1",
+          "balance": "0"
+        },
+        "address:zdenko": {
+          "nonce": "1",
+          "balance": "100"
+        }
+      },
+      "newAddresses": [
+        {
+          "creatorAddress": "address:owner",
+          "creatorNonce": "1",
+          "newAddress": "sc:adder"
+        }
+      ]
+    },
+    {
+      "step": "scDeploy",
+      "txId": "1",
+      "tx": {
+        "from": "address:owner",
+        "contractCode": "file:../output/amm.wasm",
+        "arguments": ["5"],
+        "gasLimit": "16,000,000",
+        "gasPrice": "0"
+      },
+      "expect": {
+        "out": [],
+        "status": "",
+        "logs": "*",
+        "gas": "*",
+        "refund": "*"
+      }
+    },
+    {
+      "step": "scQuery",
+      "comment": "Faucet Adderr's address",
+      "txId": "2",
+      "tx": {
+        "to": "sc:adder",
+        "function": "faucet",
+        "arguments": ["2,000,000", "2,000,000"]
+      },
+      "expect": {
+        "out": [],
+        "status": "0",
+        "logs": []
+      }
+    },
+    {
+      "step": "scQuery",
+      "comment": "provide to pool (rate 2 Token1 for 1 Token1)",
+      "txId": "3",
+      "tx": {
+        "to": "sc:adder",
+        "function": "provide",
+        "arguments": ["1,000,000", "500,000"]
+      },
+      "expect": {
+        "out": ["100,000000"],
+        "status": "0",
+        "logs": "*",
+        "gas": "*",
+        "refund": "*"
+      }
+    },
+    {
+      "step": "scQuery",
+      "comment": "estimate swap for 200.000 Token1",
+      "txId": "4",
+      "tx": {
+        "to": "sc:adder",
+        "function": "getSwapToken1Estimate",
+        "arguments": ["200,000"]
+      },
+      "expect": {
+        "out": ["82986"],
+        "status": "0",
+        "logs": "*",
+        "gas": "*",
+        "refund": "*"
+      }
+    },
+    {
+      "step": "scQuery",
+      "comment": "swap 200.000 of Token1 .. return error of slippage",
+      "txId": "5",
+      "tx": {
+        "to": "sc:adder",
+        "function": "swapToken1",
+        "arguments": ["200,000", "100000"]
+      },
+      "expect": {
+        "out": [],
+        "message": "str:Slippage exceed",
+        "status": "4",
+        "logs": "*",
+        "gas": "*",
+        "refund": "*"
+      }
+    },
+    {
+      "step": "scQuery",
+      "comment": "swap 200.000 of Token1",
+      "txId": "6",
+      "tx": {
+        "to": "sc:adder",
+        "function": "swapToken1",
+        "arguments": ["200,000", "82300"]
+      },
+      "expect": {
+        "out": ["82986"],
+        "status": "0",
+        "logs": "*",
+        "gas": "*",
+        "refund": "*"
+      }
+    },
+    {
+      "step": "scQuery",
+      "comment": "Get pool detail",
+      "txId": "7",
+      "tx": {
+        "to": "sc:adder",
+        "function": "getPoolDetail",
+        "arguments": []
+      },
+      "expect": {
+        "out": [
+          "biguint:1,200,000|biguint:417,014|biguint:100,000,000|biguint:5"
+        ],
+        "status": "",
+        "logs": []
+      }
+    },
+    {
+      "step": "scQuery",
+      "comment": "Check holdings holdings, Token1: 1,000,000 - 200,000, Token2: 1,500,000 + 82,986",
+      "txId": "4",
+      "tx": {
+        "to": "sc:adder",
+        "function": "getMyHoldings",
+        "arguments": []
+      },
+      "expect": {
+        "out": [
+          {
+            "0token1_amount": "biguint:800,000",
+            "1token2_amount": "biguint:1,582,986",
+            "2shares_amount": "biguint:100,000,000"
+          }
+        ],
+        "status": "",
+        "logs": []
+      }
+    }
+  ]
+}

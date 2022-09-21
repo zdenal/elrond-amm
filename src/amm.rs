@@ -146,7 +146,6 @@ pub trait Adder {
             .or_insert(share.clone());
 
         require!(share != 0, "Threshold not reached");
-        sc_print!("share is {}", share);
 
         let updated_detail = PoolDetail {
             token1_total: &token1_total + &token1_amount,
@@ -158,6 +157,43 @@ pub trait Adder {
         self.pool_detail().set(updated_detail);
 
         share
+    }
+
+    #[view(getSwapToken1Estimate)]
+    fn get_swap_token1_estimate(&self, token1_amount: BigUint) -> BigUint {
+        let pool_detail = self.pool_detail().get();
+
+        self.swap_token1_estimate(&pool_detail, &token1_amount)
+    }
+
+    #[endpoint(swapToken1)]
+    fn swap_token1(&self, token1_amount: BigUint, min_token2_amount: BigUint) -> BigUint {
+        let caller = self.blockchain().get_caller();
+        let holdings = self.get_my_holdings();
+        let pool_detail = self.pool_detail().get();
+
+        require!(&holdings.token1_amount >= &token1_amount, "Insufficient Token1 amount");
+
+        let token2_amount = self.swap_token1_estimate(&pool_detail, &token1_amount);
+
+        require!(&token2_amount > &min_token2_amount, "Slippage exceed");
+
+        self.token1_accounts()
+            .entry(caller.clone())
+            .and_modify(|value| *value -= &token1_amount);
+
+        self.token2_accounts()
+            .entry(caller.clone())
+            .and_modify(|value| *value += &token2_amount);
+
+        let updated_pool_detail = PoolDetail {
+            token1_total: &pool_detail.token1_total + &token1_amount,
+            token2_total: &pool_detail.token2_total - &token2_amount,
+            ..pool_detail
+        };
+
+        self.pool_detail().set(updated_pool_detail);
+        token2_amount
     }
 
     #[view(getWithdrawEstimate)]
@@ -194,5 +230,16 @@ pub trait Adder {
         self.pool_detail().set(updated_detail);
 
         (token1_amount, token2_amount)
+    }
+
+    fn swap_token1_estimate(&self, pool_detail: &PoolDetail<Self::Api>, token1_amount: &BigUint) -> BigUint {
+        require!(&pool_detail.token1_total >= token1_amount, "Insufficient liquidity");
+
+        let token1_amount_w_fee = (&BigUint::from(1000u16) - &pool_detail.fee) * token1_amount / &BigUint::from(1000u16); // Adjusting the fees charged
+                                                                                    //
+        let k = &pool_detail.token1_total * &pool_detail.token2_total;
+        let token1_total_after = &pool_detail.token1_total + &token1_amount_w_fee;
+        let token2_total_after = k / &token1_total_after;
+        &pool_detail.token2_total - &token2_total_after
     }
 }
