@@ -9,13 +9,14 @@
 	import { AmountInput, ActionButton, Title } from '../../components';
 	import { provide, getToken1ProvideEstimate, getToken2ProvideEstimate } from '../../contract';
 	import { load as loadHoldings } from '../../store/myHoldings';
+	import { watchSendTx } from '../../utils';
 
 	export let data;
 
-	const { addNotification } = getNotificationsContext();
 	const token1Amount = field('token1Amount', undefined, [required()]);
 	const token2Amount = field('token2Amount', undefined, [required()]);
 	const myForm = form(token1Amount, token2Amount);
+	const { addNotification } = getNotificationsContext();
 
 	async function handleProvide() {
 		const txHash = await provide({
@@ -24,27 +25,14 @@
 			provider: $provider,
 			...data.contractData
 		});
-		addNotification({ text: 'Transaction send', position: 'top-right', removeAfter: 2000 });
 
-		let watcher = new TransactionWatcher($contractData.networkProvider);
-		watcher.awaitCompleted({ getHash: () => new TransactionHash(txHash) }).then((res) => {
-			console.log('Tx watcher result', res);
-			if (res.contractResults.items.length > 0) {
+		watchSendTx({
+			txHash,
+			contractData: $contractData,
+			onSuccess: () => {
 				loadHoldings($provider, $contractData);
-				addNotification({
-					text: 'Transaction success',
-					position: 'top-right',
-					type: 'success',
-					removeAfter: 2000
-				});
-			} else {
-				addNotification({
-					text: 'Transaction failed',
-					position: 'top-right',
-					type: 'error',
-					removeAfter: 2000
-				});
-			}
+			},
+			addNotification: addNotification
 		});
 	}
 

@@ -9,7 +9,7 @@
 	import { Title, ActionButton, AmountInput, Table, Row } from '../../components';
 	import { provider, contractData } from '../../stores';
 	import { myHoldings, load as loadHoldings } from '../../store/myHoldings';
-	import { toDecimal } from '../../utils';
+	import { toDecimal, watchSendTx } from '../../utils';
 
 	export let data;
 
@@ -28,27 +28,14 @@
 			provider: $provider,
 			...data.contractData
 		});
-		addNotification({ text: 'Transaction send', position: 'top-right', removeAfter: 2000 });
 
-		let watcher = new TransactionWatcher($contractData.networkProvider);
-		watcher.awaitCompleted({ getHash: () => new TransactionHash(txHash) }).then((res) => {
-			console.log('Tx watcher result', res);
-			if (res.contractResults.items.length > 0) {
+		watchSendTx({
+			txHash,
+			contractData: $contractData,
+			onSuccess: () => {
 				loadHoldings($provider, $contractData);
-				addNotification({
-					text: 'Transaction success',
-					position: 'top-right',
-					type: 'success',
-					removeAfter: 2000
-				});
-			} else {
-				addNotification({
-					text: 'Transaction failed',
-					position: 'top-right',
-					type: 'error',
-					removeAfter: 2000
-				});
-			}
+			},
+			addNotification: addNotification
 		});
 	}
 

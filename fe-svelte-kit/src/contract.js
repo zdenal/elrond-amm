@@ -147,7 +147,7 @@ export async function withdraw({
 }) {
 	return await makeCall({
 		functionName: 'withdraw',
-		gasLimit: networkConfig.MinGasLimit + 3100000,
+		gasLimit: networkConfig.MinGasLimit + 3500000,
 		args: [new BigIntValue(shareAmount * PRECISION)],
 		contract,
 		provider,
