@@ -5,5 +5,6 @@ import Title from './Title.svelte';
 import WalletConnect from './WalletConnect.svelte';
 import Table from './Table.svelte';
 import Row from './Row.svelte';
+import Swap from './Swap.svelte';
 
-export { ActionButton, AmountInput, Link, Title, WalletConnect, Table, Row };
+export { ActionButton, AmountInput, Link, Title, WalletConnect, Table, Row, Swap };

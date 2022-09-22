@@ -10,7 +10,7 @@
         "contractCrate": {
             "name": "amm",
             "version": "0.0.0",
-            "git_version": "4391288-modified"
+            "git_version": "470e8dc-modified"
         },
         "framework": {
             "name": "elrond-wasm",
@@ -103,6 +103,74 @@
                 },
                 {
                     "name": "token2_amount",
+                    "type": "BigUint"
+                }
+            ],
+            "outputs": [
+                {
+                    "type": "BigUint"
+                }
+            ]
+        },
+        {
+            "name": "getSwapToken1Estimate",
+            "mutability": "readonly",
+            "inputs": [
+                {
+                    "name": "token1_amount",
+                    "type": "BigUint"
+                }
+            ],
+            "outputs": [
+                {
+                    "type": "BigUint"
+                }
+            ]
+        },
+        {
+            "name": "getSwapToken2Estimate",
+            "mutability": "readonly",
+            "inputs": [
+                {
+                    "name": "token2_amount",
+                    "type": "BigUint"
+                }
+            ],
+            "outputs": [
+                {
+                    "type": "BigUint"
+                }
+            ]
+        },
+        {
+            "name": "swapToken1",
+            "mutability": "mutable",
+            "inputs": [
+                {
+                    "name": "token1_amount",
+                    "type": "BigUint"
+                },
+                {
+                    "name": "min_token2_amount",
+                    "type": "BigUint"
+                }
+            ],
+            "outputs": [
+                {
+                    "type": "BigUint"
+                }
+            ]
+        },
+        {
+            "name": "swapToken2",
+            "mutability": "mutable",
+            "inputs": [
+                {
+                    "name": "token2_amount",
+                    "type": "BigUint"
+                },
+                {
+                    "name": "min_token1_amount",
                     "type": "BigUint"
                 }
             ],

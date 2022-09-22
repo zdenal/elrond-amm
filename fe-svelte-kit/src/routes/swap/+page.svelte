@@ -1,23 +1,57 @@
 <script>
+	import { debounce } from 'lodash';
 	import { form, field } from 'svelte-forms';
 	import { required } from 'svelte-forms/validators';
 	import { myHoldings } from '../../store/myHoldings';
 	import { provider, contractData } from '../../stores';
-	import { AmountInput, ActionButton, Title } from '../../components';
+	import { AmountInput, ActionButton, Title, Swap } from '../../components';
+	import { getSwapToken1Estimate, getSwapToken2Estimate } from '../../contract';
 
-	const token1Amount = field('token1Amount', 50, [required()]);
-	const token2Amount = field('token2Amount', 50, [required()]);
+	export let data;
+
+	const token1Amount = field('token1Amount', undefined, [required()]);
+	const token2Amount = field('token2Amount', undefined, [required()]);
 	const myForm = form(token1Amount, token2Amount);
 
-	$: fromBalance = $myHoldings ? $myHoldings.token1Amount + 2222 : '...';
-	$: toBalance = $myHoldings ? $myHoldings.token2Amount : '...';
-	$: fromField = { amount: token1Amount, balance: fromBalance, name: 'Token1' };
-	$: toField = { amount: token2Amount, balance: toBalance, name: 'Token2' };
+	$: token1Balance = $myHoldings?.token1Amount;
+	$: token2Balance = $myHoldings?.token2Amount;
 
 	function handleProvide() {}
 
-	function switchFromTo() {
-		[fromField, toField] = [toField, fromField];
+	async function token1Estimate() {
+		if (!$provider || $token1Amount.value <= 0 || !$token1Amount.value) {
+			await token2Amount.reset();
+			return;
+		}
+
+		if ($token1Amount.value > token1Balance) {
+			await token1Amount.set(token1Balance);
+		}
+
+		const token2EstimatedAmount = await getSwapToken1Estimate({
+			token1Amount: $token1Amount.value,
+			...data.contractData
+		});
+
+		await token2Amount.set(token2EstimatedAmount);
+	}
+
+	async function token2Estimate() {
+		if (!$provider || $token2Amount.value <= 0 || !$token2Amount.value) {
+			await token1Amount.reset();
+			return;
+		}
+
+		if ($token2Amount.value > token2Balance) {
+			await token2Amount.set(token2Balance);
+		}
+
+		const token1EstimatedAmount = await getSwapToken2Estimate({
+			token2Amount: $token2Amount.value,
+			...data.contractData
+		});
+
+		await token1Amount.set(token1EstimatedAmount);
 	}
 </script>
 
@@ -25,42 +59,24 @@
 	<div>
 		<Title>Swap</Title>
 	</div>
-	<div>
-		<AmountInput
-			bind:value={fromField.amount.$value}
-			label="From: {fromField.name}"
-			currencyName="Balance: {fromField.balance}"
-		/>
-	</div>
-	<div class="text-center">
-		<button
-			on:click={switchFromTo}
-			type="button"
-			class="inline-flex items-center rounded-full border border-transparent p-3 text-white shadow-sm hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
-		>
-			<svg
-				class="text-gray-500"
-				width="30"
-				height="30"
-				viewBox="0 0 24 24"
-				stroke-width="2"
-				stroke="currentColor"
-				fill="none"
-				stroke-linecap="round"
-				stroke-linejoin="round"
-			>
-				<path stroke="none" d="M0 0h24v24H0z" /> <path d="M3 9l4-4l4 4m-4 -4v14" />
-				<path d="M21 15l-4 4l-4-4m4 4v-14" /></svg
-			>
-		</button>
-	</div>
-	<div>
-		<AmountInput
-			bind:value={toField.amount.$value}
-			label="To: {toField.name}"
-			currencyName="Balance: {toField.balance}"
-		/>
-	</div>
+	<Swap>
+		<div slot="from" style="margin-top: .5rem !important;">
+			<AmountInput
+				bind:value={$token1Amount.value}
+				onTyping={debounce(token1Estimate, 500)}
+				label="Token1"
+				currencyName="Balance: {token1Balance}"
+			/>
+		</div>
+		<div slot="to" style="margin-top: .5rem !important;">
+			<AmountInput
+				bind:value={$token2Amount.value}
+				onTyping={debounce(token2Estimate, 500)}
+				label="Token2"
+				currencyName="Balance: {token2Balance}"
+			/>
+		</div>
+	</Swap>
 	<div class="text-center">
 		<label class="block text-sm font-medium text-gray-700">Slippage tolerance</label>
 		<span class="isolate inline-flex rounded-md shadow-sm">

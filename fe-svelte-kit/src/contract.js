@@ -138,6 +138,28 @@ export async function getToken1ProvideEstimate({ token2Amount, contract, network
 	return firstValue?.value.toNumber() || 0;
 }
 
+export async function getSwapToken1Estimate({ token1Amount, contract, networkProvider }) {
+	const { firstValue, secondValue, returnCode } = await makeQuery({
+		functionName: 'getSwapToken1Estimate',
+		args: [new BigIntValue(token1Amount)],
+		contract,
+		networkProvider
+	});
+
+	return firstValue?.value.toNumber() || 0;
+}
+
+export async function getSwapToken2Estimate({ token2Amount, contract, networkProvider }) {
+	const { firstValue, secondValue, returnCode } = await makeQuery({
+		functionName: 'getSwapToken2Estimate',
+		args: [new BigIntValue(token2Amount)],
+		contract,
+		networkProvider
+	});
+
+	return firstValue?.value.toNumber() || 0;
+}
+
 export async function withdraw({
 	shareAmount,
 	contract,
