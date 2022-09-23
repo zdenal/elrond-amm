@@ -5,7 +5,15 @@
 	import { getNotificationsContext } from 'svelte-notifications';
 	import { myHoldings, load as loadHoldings } from '../../store/myHoldings';
 	import { provider } from '../../stores';
-	import { AmountInput, ActionButton, Title, Swap, ButtonGroupSelect } from '../../components';
+	import {
+		AmountInput,
+		ActionButton,
+		Title,
+		Swap,
+		ButtonGroupSelect,
+		Table,
+		Row
+	} from '../../components';
 	import { getSwapToken1Estimate, getSwapToken2Estimate, swapToken1 } from '../../contract';
 	import { watchSendTx } from '../../utils';
 
@@ -122,18 +130,14 @@
 			{item}%
 		</ButtonGroupSelect>
 	</div>
-	<div class="mt-5 border-t border-b border-gray-200 mb-6">
-		<dl class="sm:divide-y sm:divide-gray-200">
-			<div class="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4">
-				<dt class="text-sm font-medium text-gray-500">Trading fee ({poolDetail.fee}%)</dt>
-				<dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{feeAmount} Token1</dd>
-			</div>
-			<div class="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4">
-				<dt class="text-sm font-medium text-gray-500">Minimum {fromTo[1]} you receive</dt>
-				<dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{minAmount}</dd>
-			</div>
-		</dl>
-	</div>
+	<Table>
+		<Row title="Trading fee ({poolDetail.fee}%)">
+			{feeAmount} Token1
+		</Row>
+		<Row title="Minimum {fromTo[1]} you receive">
+			{minAmount}
+		</Row>
+	</Table>
 	<div class="text-center">
 		<ActionButton
 			label="Provide"
