@@ -146,7 +146,10 @@ export async function getSwapToken1Estimate({ token1Amount, contract, networkPro
 		networkProvider
 	});
 
-	return firstValue?.value.toNumber() || 0;
+	return {
+		estimatedToken2Amount: firstValue?.fields[0].value.value.toNumber() || 0,
+		feeAmount: firstValue?.fields[1].value.value.toNumber() || 0
+	};
 }
 
 export async function getSwapToken2Estimate({ token2Amount, contract, networkProvider }) {
@@ -157,7 +160,29 @@ export async function getSwapToken2Estimate({ token2Amount, contract, networkPro
 		networkProvider
 	});
 
-	return firstValue?.value.toNumber() || 0;
+	return {
+		estimatedToken1Amount: firstValue?.fields[0].value.value.toNumber() || 0,
+		feeAmount: firstValue?.fields[1].value.value.toNumber() || 0
+	};
+}
+
+export async function swapToken1({
+	amount,
+	minAmount,
+	contract,
+	provider,
+	networkProvider,
+	networkConfig
+}) {
+	return await makeCall({
+		functionName: 'swapToken1',
+		gasLimit: networkConfig.MinGasLimit + 3500000,
+		args: [new BigIntValue(amount), new BigIntValue(minAmount)],
+		contract,
+		provider,
+		networkProvider,
+		networkConfig
+	});
 }
 
 export async function withdraw({

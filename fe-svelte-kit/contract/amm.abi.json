@@ -10,7 +10,7 @@
         "contractCrate": {
             "name": "amm",
             "version": "0.0.0",
-            "git_version": "470e8dc-modified"
+            "git_version": "feea8ad-modified"
         },
         "framework": {
             "name": "elrond-wasm",
@@ -123,7 +123,7 @@
             ],
             "outputs": [
                 {
-                    "type": "BigUint"
+                    "type": "tuple<BigUint,BigUint>"
                 }
             ]
         },
@@ -138,7 +138,7 @@
             ],
             "outputs": [
                 {
-                    "type": "BigUint"
+                    "type": "tuple<BigUint,BigUint>"
                 }
             ]
         },
@@ -157,7 +157,7 @@
             ],
             "outputs": [
                 {
-                    "type": "BigUint"
+                    "type": "tuple<BigUint,BigUint>"
                 }
             ]
         },
@@ -176,7 +176,7 @@
             ],
             "outputs": [
                 {
-                    "type": "BigUint"
+                    "type": "tuple<BigUint,BigUint>"
                 }
             ]
         },

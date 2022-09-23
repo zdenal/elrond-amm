@@ -2,24 +2,48 @@
 	import { debounce } from 'lodash';
 	import { form, field } from 'svelte-forms';
 	import { required } from 'svelte-forms/validators';
-	import { myHoldings } from '../../store/myHoldings';
-	import { provider, contractData } from '../../stores';
+	import { getNotificationsContext } from 'svelte-notifications';
+	import { myHoldings, load as loadHoldings } from '../../store/myHoldings';
+	import { provider } from '../../stores';
 	import { AmountInput, ActionButton, Title, Swap } from '../../components';
-	import { getSwapToken1Estimate, getSwapToken2Estimate } from '../../contract';
+	import { getSwapToken1Estimate, getSwapToken2Estimate, swapToken1 } from '../../contract';
+	import { watchSendTx } from '../../utils';
 
 	export let data;
 
+	const { contractData, poolDetail } = data;
 	const token1Amount = field('token1Amount', undefined, [required()]);
 	const token2Amount = field('token2Amount', undefined, [required()]);
 	const myForm = form(token1Amount, token2Amount);
+	const { addNotification } = getNotificationsContext();
 
 	$: token1Balance = $myHoldings?.token1Amount;
 	$: token2Balance = $myHoldings?.token2Amount;
 
-	function handleProvide() {}
+	let feeAmount = '...';
+
+	async function handleProvide() {
+		const txHash = await swapToken1({
+			amount: $token1Amount.value,
+			/*minAmount: $token2Amount.value,*/
+			minAmount: 1,
+			provider: $provider,
+			...contractData
+		});
+
+		watchSendTx({
+			txHash,
+			contractData: contractData,
+			onSuccess: () => {
+				loadHoldings($provider, contractData);
+			},
+			addNotification: addNotification
+		});
+	}
 
 	async function token1Estimate() {
 		if (!$provider || $token1Amount.value <= 0 || !$token1Amount.value) {
+			feeAmount = '...';
 			await token2Amount.reset();
 			return;
 		}
@@ -28,12 +52,13 @@
 			await token1Amount.set(token1Balance);
 		}
 
-		const token2EstimatedAmount = await getSwapToken1Estimate({
+		const { estimatedToken2Amount, feeAmount: _feeAmount } = await getSwapToken1Estimate({
 			token1Amount: $token1Amount.value,
-			...data.contractData
+			...contractData
 		});
 
-		await token2Amount.set(token2EstimatedAmount);
+		feeAmount = _feeAmount;
+		await token2Amount.set(estimatedToken2Amount);
 	}
 
 	async function token2Estimate() {
@@ -46,12 +71,13 @@
 			await token2Amount.set(token2Balance);
 		}
 
-		const token1EstimatedAmount = await getSwapToken2Estimate({
+		const { estimatedToken1Amount, feeAmount: _feeAmount } = await getSwapToken2Estimate({
 			token2Amount: $token2Amount.value,
-			...data.contractData
+			...contractData
 		});
 
-		await token1Amount.set(token1EstimatedAmount);
+		feeAmount = _feeAmount;
+		await token1Amount.set(estimatedToken1Amount);
 	}
 </script>
 
@@ -109,8 +135,8 @@
 	<div class="mt-5 border-t border-b border-gray-200 mb-6">
 		<dl class="sm:divide-y sm:divide-gray-200">
 			<div class="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4">
-				<dt class="text-sm font-medium text-gray-500">Trading fee(1%)</dt>
-				<dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">1 Token1</dd>
+				<dt class="text-sm font-medium text-gray-500">Trading fee ({poolDetail.fee}%)</dt>
+				<dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{feeAmount} Token1</dd>
 			</div>
 			<div class="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4">
 				<dt class="text-sm font-medium text-gray-500">Minimum Token2 you receive</dt>
