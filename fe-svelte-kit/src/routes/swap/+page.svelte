@@ -5,7 +5,7 @@
 	import { getNotificationsContext } from 'svelte-notifications';
 	import { myHoldings, load as loadHoldings } from '../../store/myHoldings';
 	import { provider } from '../../stores';
-	import { AmountInput, ActionButton, Title, Swap } from '../../components';
+	import { AmountInput, ActionButton, Title, Swap, ButtonGroupSelect } from '../../components';
 	import { getSwapToken1Estimate, getSwapToken2Estimate, swapToken1 } from '../../contract';
 	import { watchSendTx } from '../../utils';
 
@@ -20,13 +20,18 @@
 	$: token1Balance = $myHoldings?.token1Amount;
 	$: token2Balance = $myHoldings?.token2Amount;
 
-	let feeAmount = '...';
+	let feeAmount = undefined;
+	$: minAmount =
+		fromTo[1] == 'Token2'
+			? Math.floor(((100 - slippage) * $token2Amount.value) / 100)
+			: Math.floor(((100 - slippage) * $token1Amount.value) / 100);
+	let slippage = 1;
+	let fromTo = ['Token1', 'Token2'];
 
 	async function handleProvide() {
 		const txHash = await swapToken1({
 			amount: $token1Amount.value,
-			/*minAmount: $token2Amount.value,*/
-			minAmount: 1,
+			minAmount: minAmount,
 			provider: $provider,
 			...contractData
 		});
@@ -36,6 +41,9 @@
 			contractData: contractData,
 			onSuccess: () => {
 				loadHoldings($provider, contractData);
+				token1Amount.reset();
+				token2Amount.reset();
+				feeAmount = undefined;
 			},
 			addNotification: addNotification
 		});
@@ -78,6 +86,11 @@
 
 		feeAmount = _feeAmount;
 		await token1Amount.set(estimatedToken1Amount);
+
+		minAmount =
+			fromTo[1] == 'Token2'
+				? (100 - slippage) * $token2Amount.value
+				: (100 - slippage) * $token1Amount.value;
 	}
 </script>
 
@@ -105,32 +118,9 @@
 	</Swap>
 	<div class="text-center">
 		<label class="block text-sm font-medium text-gray-700">Slippage tolerance</label>
-		<span class="isolate inline-flex rounded-md shadow-sm">
-			<button
-				type="button"
-				class="relative inline-flex items-center rounded-l-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:z-10 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
-			>
-				0.5%
-			</button>
-			<button
-				type="button"
-				class="relative -ml-px inline-flex items-center border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:z-10 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
-			>
-				1%
-			</button>
-			<button
-				type="button"
-				class="relative -ml-px inline-flex items-center border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:z-10 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
-			>
-				2%
-			</button>
-			<button
-				type="button"
-				class="relative -ml-px inline-flex items-center rounded-r-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:z-10 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
-			>
-				5%
-			</button>
-		</span>
+		<ButtonGroupSelect items={[0.5, 1, 2, 5]} bind:selected={slippage} let:item>
+			{item}%
+		</ButtonGroupSelect>
 	</div>
 	<div class="mt-5 border-t border-b border-gray-200 mb-6">
 		<dl class="sm:divide-y sm:divide-gray-200">
@@ -139,8 +129,8 @@
 				<dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{feeAmount} Token1</dd>
 			</div>
 			<div class="py-4 sm:py-5 sm:grid sm:grid-cols-3 sm:gap-4">
-				<dt class="text-sm font-medium text-gray-500">Minimum Token2 you receive</dt>
-				<dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">1232.23</dd>
+				<dt class="text-sm font-medium text-gray-500">Minimum {fromTo[1]} you receive</dt>
+				<dd class="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">{minAmount}</dd>
 			</div>
 		</dl>
 	</div>

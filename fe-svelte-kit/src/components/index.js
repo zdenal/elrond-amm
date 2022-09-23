@@ -6,5 +6,16 @@ import WalletConnect from './WalletConnect.svelte';
 import Table from './Table.svelte';
 import Row from './Row.svelte';
 import Swap from './Swap.svelte';
+import ButtonGroupSelect from './ButtonGroupSelect.svelte';
 
-export { ActionButton, AmountInput, Link, Title, WalletConnect, Table, Row, Swap };
+export {
+	ActionButton,
+	ButtonGroupSelect,
+	AmountInput,
+	Link,
+	Title,
+	WalletConnect,
+	Table,
+	Row,
+	Swap
+};
