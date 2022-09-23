@@ -22,7 +22,6 @@ const PRECISION: usize = 1_000_000; // Precision of 6 digits
 
 #[elrond_wasm::contract]
 pub trait Adder {
-
     #[storage_mapper("fee")]
     fn fee(&self) -> SingleValueMapper<BigUint>;
 
@@ -56,7 +55,7 @@ pub trait Adder {
             token1_total: BigUint::zero(),
             token2_total: BigUint::zero(),
             shares_total: BigUint::zero(),
-            fee: self.fee().get()
+            fee: self.fee().get(),
         };
 
         self.pool_detail().set_if_empty(detail);
@@ -80,21 +79,30 @@ pub trait Adder {
     fn get_my_holdings(&self) -> Holding<Self::Api> {
         let caller = self.blockchain().get_caller();
 
-        let token1_amount = self.token1_accounts().get(&caller).unwrap_or(BigUint::zero());
-        let token2_amount = self.token2_accounts().get(&caller).unwrap_or(BigUint::zero());
+        let token1_amount = self
+            .token1_accounts()
+            .get(&caller)
+            .unwrap_or(BigUint::zero());
+        let token2_amount = self
+            .token2_accounts()
+            .get(&caller)
+            .unwrap_or(BigUint::zero());
         let shares_amount = self.shares().get(&caller).unwrap_or(BigUint::zero());
 
         Holding {
             token1_amount,
             token2_amount,
-            shares_amount
+            shares_amount,
         }
     }
 
     #[view(getToken1ProvideEstimate)]
     fn get_token1_provide_estimate(&self, token2_amount: BigUint) -> BigUint {
         let pool_detail = self.pool_detail().get();
-        require!(&pool_detail.token1_total * &pool_detail.token2_total > 0, "Zero liquidity in pool");
+        require!(
+            &pool_detail.token1_total * &pool_detail.token2_total > 0,
+            "Zero liquidity in pool"
+        );
 
         pool_detail.token1_total * token2_amount / pool_detail.token2_total
     }
@@ -102,7 +110,10 @@ pub trait Adder {
     #[view(getToken2ProvideEstimate)]
     fn get_token2_provide_estimate(&self, token1_amount: BigUint) -> BigUint {
         let pool_detail = self.pool_detail().get();
-        require!(&pool_detail.token1_total * &pool_detail.token2_total > 0, "Zero liquidity in pool");
+        require!(
+            &pool_detail.token1_total * &pool_detail.token2_total > 0,
+            "Zero liquidity in pool"
+        );
 
         pool_detail.token2_total * token1_amount / pool_detail.token1_total
     }
@@ -112,8 +123,14 @@ pub trait Adder {
         let caller = self.blockchain().get_caller();
         let holdings = self.get_my_holdings();
 
-        require!(holdings.token1_amount >= token1_amount, "Insufficient Token1 amount");
-        require!(holdings.token2_amount >= token2_amount, "Insufficient Token2 amount");
+        require!(
+            holdings.token1_amount >= token1_amount,
+            "Insufficient Token1 amount"
+        );
+        require!(
+            holdings.token2_amount >= token2_amount,
+            "Insufficient Token2 amount"
+        );
 
         let detail = self.pool_detail().get();
         let shares_total = detail.shares_total;
@@ -160,28 +177,35 @@ pub trait Adder {
     }
 
     #[view(getSwapToken1Estimate)]
-    fn get_swap_token1_estimate(&self, token1_amount: BigUint) -> BigUint {
+    fn get_swap_token1_estimate(&self, token1_amount: BigUint) -> (BigUint, BigUint) {
         let pool_detail = self.pool_detail().get();
 
         self.swap_token1_estimate(&pool_detail, &token1_amount)
     }
 
     #[view(getSwapToken2Estimate)]
-    fn get_swap_token2_estimate(&self, token2_amount: BigUint) -> BigUint {
+    fn get_swap_token2_estimate(&self, token2_amount: BigUint) -> (BigUint, BigUint) {
         let pool_detail = self.pool_detail().get();
 
         self.swap_token2_estimate(&pool_detail, &token2_amount)
     }
 
     #[endpoint(swapToken1)]
-    fn swap_token1(&self, token1_amount: BigUint, min_token2_amount: BigUint) -> BigUint {
+    fn swap_token1(
+        &self,
+        token1_amount: BigUint,
+        min_token2_amount: BigUint,
+    ) -> (BigUint, BigUint) {
         let caller = self.blockchain().get_caller();
         let holdings = self.get_my_holdings();
         let pool_detail = self.pool_detail().get();
 
-        require!(&holdings.token1_amount >= &token1_amount, "Insufficient Token1 amount");
+        require!(
+            &holdings.token1_amount >= &token1_amount,
+            "Insufficient Token1 amount"
+        );
 
-        let token2_amount = self.swap_token1_estimate(&pool_detail, &token1_amount);
+        let (token2_amount, fee_amount) = self.swap_token1_estimate(&pool_detail, &token1_amount);
 
         require!(&token2_amount > &min_token2_amount, "Slippage exceed");
 
@@ -200,18 +224,25 @@ pub trait Adder {
         };
 
         self.pool_detail().set(updated_pool_detail);
-        token2_amount
+        (token2_amount, fee_amount)
     }
 
     #[endpoint(swapToken2)]
-    fn swap_token2(&self, token2_amount: BigUint, min_token1_amount: BigUint) -> BigUint {
+    fn swap_token2(
+        &self,
+        token2_amount: BigUint,
+        min_token1_amount: BigUint,
+    ) -> (BigUint, BigUint) {
         let caller = self.blockchain().get_caller();
         let holdings = self.get_my_holdings();
         let pool_detail = self.pool_detail().get();
 
-        require!(&holdings.token2_amount >= &token2_amount, "Insufficient Token2 amount");
+        require!(
+            &holdings.token2_amount >= &token2_amount,
+            "Insufficient Token2 amount"
+        );
 
-        let token1_amount = self.swap_token2_estimate(&pool_detail, &token2_amount);
+        let (token1_amount, fee_amount) = self.swap_token2_estimate(&pool_detail, &token2_amount);
 
         require!(&token1_amount > &min_token1_amount, "Slippage exceed");
 
@@ -230,13 +261,16 @@ pub trait Adder {
         };
 
         self.pool_detail().set(updated_pool_detail);
-        token1_amount
+        (token1_amount, fee_amount)
     }
 
     #[view(getWithdrawEstimate)]
     fn get_withdraw_estimate(&self, share: BigUint) -> (BigUint, BigUint) {
         let detail = self.pool_detail().get();
-        require!(detail.shares_total >= share, "Share should be less than total share");
+        require!(
+            detail.shares_total >= share,
+            "Share should be less than total share"
+        );
 
         let token1_amount = &share * &detail.token1_total / &detail.shares_total;
         let token2_amount = share * detail.token2_total / detail.shares_total;
@@ -253,9 +287,15 @@ pub trait Adder {
         let (token1_amount, token2_amount) = self.get_withdraw_estimate(share.clone());
         let detail = self.pool_detail().get();
 
-        self.token1_accounts().entry(caller.clone()).and_modify(|value| *value += &token1_amount);
-        self.token2_accounts().entry(caller.clone()).and_modify(|value| *value += &token2_amount);
-        self.shares().entry(caller.clone()).and_modify(|value| *value -= &share);
+        self.token1_accounts()
+            .entry(caller.clone())
+            .and_modify(|value| *value += &token1_amount);
+        self.token2_accounts()
+            .entry(caller.clone())
+            .and_modify(|value| *value += &token2_amount);
+        self.shares()
+            .entry(caller.clone())
+            .and_modify(|value| *value -= &share);
 
         let updated_detail = PoolDetail {
             token1_total: &detail.token1_total - &token1_amount,
@@ -269,27 +309,47 @@ pub trait Adder {
         (token1_amount, token2_amount)
     }
 
-    fn swap_token1_estimate(&self, pool_detail: &PoolDetail<Self::Api>, token1_amount: &BigUint) -> BigUint {
-        require!(&pool_detail.token1_total >= token1_amount, "Insufficient liquidity");
+    fn swap_token1_estimate(
+        &self,
+        pool_detail: &PoolDetail<Self::Api>,
+        token1_amount: &BigUint,
+    ) -> (BigUint, BigUint) {
+        require!(
+            &pool_detail.token1_total >= token1_amount,
+            "Insufficient liquidity"
+        );
 
-        let token1_amount_w_fee = (&BigUint::from(1000u16) - &pool_detail.fee) * token1_amount / &BigUint::from(1000u16); // Adjusting the fees charged
-                                                                                    //
+        let token1_amount_w_fee =
+            (&BigUint::from(1000u16) - &pool_detail.fee) * token1_amount / &BigUint::from(1000u16); // Adjusting the fees charged
+                                                                                                    //
         let k = &pool_detail.token1_total * &pool_detail.token2_total;
         let token1_total_after = &pool_detail.token1_total + &token1_amount_w_fee;
         let token2_total_after = k / &token1_total_after;
-        &pool_detail.token2_total - &token2_total_after
+        let estimated_amount = &pool_detail.token2_total - &token2_total_after;
+        let fee_amount = token1_amount - &token1_amount_w_fee;
+        (estimated_amount, fee_amount)
     }
 
-    fn swap_token2_estimate(&self, pool_detail: &PoolDetail<Self::Api>, token2_amount: &BigUint) -> BigUint {
-        require!(&pool_detail.token2_total >= token2_amount, "Insufficient liquidity");
+    fn swap_token2_estimate(
+        &self,
+        pool_detail: &PoolDetail<Self::Api>,
+        token2_amount: &BigUint,
+    ) -> (BigUint, BigUint) {
+        require!(
+            &pool_detail.token2_total >= token2_amount,
+            "Insufficient liquidity"
+        );
 
-                                                                                    //
+        //
         let k = &pool_detail.token1_total * &pool_detail.token2_total;
         let token2_total_after = &pool_detail.token2_total + token2_amount;
         let token1_total_after = k / &token2_total_after;
         let token1_amount = &pool_detail.token1_total - &token1_total_after;
 
         // token1 amount w/ fee
-        (&BigUint::from(1000u16) - &pool_detail.fee) * token1_amount / &BigUint::from(1000u16)
+        let estimated_amount =
+            (&BigUint::from(1000u16) - &pool_detail.fee) * &token1_amount / &BigUint::from(1000u16);
+        let fee_amount = token1_amount - &estimated_amount;
+        (estimated_amount, fee_amount)
     }
 }

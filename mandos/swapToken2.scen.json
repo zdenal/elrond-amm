@@ -89,7 +89,7 @@
         "arguments": ["200,000"]
       },
       "expect": {
-        "out": ["165833"],
+        "out": ["biguint:165833|biguint:834"],
         "status": "0",
         "logs": "*",
         "gas": "*",
@@ -130,7 +130,7 @@
         "arguments": ["200,000", "82300"]
       },
       "expect": {
-        "out": ["165833"],
+        "out": ["biguint:165833|biguint:834"],
         "status": "0",
         "logs": "*",
         "gas": "*",

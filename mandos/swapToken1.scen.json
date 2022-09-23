@@ -66,7 +66,7 @@
       "tx": {
         "to": "sc:adder",
         "from": "address:zdenko",
-        "gasLimit": "10,900,000",
+        "gasLimit": "12,900,000",
         "gasPrice": "0",
         "function": "provide",
         "arguments": ["1,000,000", "500,000"]
@@ -92,7 +92,7 @@
         "arguments": ["200,000"]
       },
       "expect": {
-        "out": ["82986"],
+        "out": ["biguint:82986|biguint:1000"],
         "status": "0",
         "logs": "*",
         "gas": "*",
@@ -133,7 +133,7 @@
         "arguments": ["200,000", "82300"]
       },
       "expect": {
-        "out": ["82986"],
+        "out": ["biguint:82986|biguint:1000"],
         "status": "0",
         "logs": "*",
         "gas": "*",
