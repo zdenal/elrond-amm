@@ -4,7 +4,7 @@
 
 	import { openModal } from 'svelte-modals';
 	import { provider } from '../stores.js';
-	import { toDecimal } from '../utils.js';
+	import { toDecimal, feeInPerc, present } from '../utils.js';
 	import { myHoldings } from '../store/myHoldings';
 
 	import { ActionButton, WalletConnect, Table, Row } from '../components';
@@ -38,13 +38,13 @@
 	<div>
 		<Table>
 			<Row title="Amount of Token1">
-				{$myHoldings ? $myHoldings.token1Amount : '...'}
+				{present($myHoldings?.token1Amount)}
 			</Row>
 			<Row title="Amount of Token2">
-				{$myHoldings ? $myHoldings.token2Amount : '...'}
+				{present($myHoldings?.token2Amount)}
 			</Row>
 			<Row title="Amount of Shares">
-				{$myHoldings ? toDecimal($myHoldings.sharesAmount) : '...'}
+				{present(toDecimal($myHoldings?.sharesAmount))}
 			</Row>
 		</Table>
 	</div>
@@ -64,7 +64,7 @@
 				{toDecimal(data.sharesTotal)}
 			</Row>
 			<Row title="Trading Fee">
-				{data.fee}%
+				{feeInPerc(data.fee)}%
 			</Row>
 		</Table>
 	</div>

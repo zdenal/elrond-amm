@@ -77,6 +77,7 @@
 			disabled={!$provider}
 			bind:value={$token1Amount.value}
 			label="Amount of Token1"
+			currencyTicker="₮1"
 			onTyping={handleToken1Typing}
 			currencyName="Balance: {$myHoldings ? $myHoldings.token1Amount : '...'}"
 		/>
@@ -86,6 +87,7 @@
 			disabled={!$provider}
 			bind:value={$token2Amount.value}
 			label="Amount of Token2"
+			currencyTicker="₮2"
 			onTyping={handleToken2Typing}
 			currencyName="Balance: {$myHoldings ? $myHoldings.token2Amount : '...'}"
 		/>

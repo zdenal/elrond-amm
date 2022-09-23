@@ -5,6 +5,7 @@
 	import { getNotificationsContext } from 'svelte-notifications';
 	import { myHoldings, load as loadHoldings } from '../../store/myHoldings';
 	import { provider } from '../../stores';
+	import { feeInPerc } from '../../utils';
 	import {
 		AmountInput,
 		ActionButton,
@@ -15,7 +16,7 @@
 		Row
 	} from '../../components';
 	import { getSwapToken1Estimate, getSwapToken2Estimate, swapToken1 } from '../../contract';
-	import { watchSendTx } from '../../utils';
+	import { watchSendTx, present } from '../../utils';
 
 	export let data;
 
@@ -111,16 +112,18 @@
 			<AmountInput
 				bind:value={$token1Amount.value}
 				onTyping={debounce(token1Estimate, 500)}
-				label="Token1"
-				currencyName="Balance: {token1Balance}"
+				label="Amount of Token1"
+				currencyTicker="₮1"
+				currencyName="Balance: {present(token1Balance)}"
 			/>
 		</div>
 		<div slot="to" style="margin-top: .5rem !important;">
 			<AmountInput
 				bind:value={$token2Amount.value}
 				onTyping={debounce(token2Estimate, 500)}
-				label="Token2"
-				currencyName="Balance: {token2Balance}"
+				label="Amount of Token2"
+				currencyTicker="₮2"
+				currencyName="Balance: {present(token2Balance)}"
 			/>
 		</div>
 	</Swap>
@@ -131,11 +134,11 @@
 		</ButtonGroupSelect>
 	</div>
 	<Table>
-		<Row title="Trading fee ({poolDetail.fee}%)">
-			{feeAmount} Token1
+		<Row title="Trading fee ({feeInPerc(poolDetail.fee)}%) ₮1">
+			{present(feeAmount)}
 		</Row>
 		<Row title="Minimum {fromTo[1]} you receive">
-			{minAmount}
+			{present(minAmount)}
 		</Row>
 	</Table>
 	<div class="text-center">

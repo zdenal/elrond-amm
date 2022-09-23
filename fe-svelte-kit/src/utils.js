@@ -1,9 +1,19 @@
 import { TransactionWatcher, TransactionHash } from '@elrondnetwork/erdjs';
 
 export const PRECISION = 1000000;
+export const FEE_PRECISION = 1000;
 
 export function toDecimal(number) {
 	return (number / PRECISION).toFixed(2);
+}
+
+export function feeInPerc(fee) {
+	return fee / FEE_PRECISION;
+}
+
+export function present(value) {
+	const res = !!value ? value : '...';
+	return res;
 }
 
 export function capitilize(str) {

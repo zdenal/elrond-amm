@@ -50,10 +50,20 @@
 		<Title>Faucet</Title>
 	</div>
 	<div>
-		<AmountInput bind:value={$token1Amount.value} label="Amount of Token1" currencyName="Token1" />
+		<AmountInput
+			bind:value={$token1Amount.value}
+			label="Amount of Token1"
+			currencyName="Token1"
+			currencyTicker="₮1"
+		/>
 	</div>
 	<div>
-		<AmountInput bind:value={$token2Amount.value} label="Amount of Token2" currencyName="Token2" />
+		<AmountInput
+			bind:value={$token2Amount.value}
+			label="Amount of Token2"
+			currencyName="Token2"
+			currencyTicker="₮2"
+		/>
 	</div>
 	<div class="flex flex-col items-center">
 		<ActionButton label="Fund" actionMethod={handleFaucet} disabled={!$myForm.valid} {provider} />
