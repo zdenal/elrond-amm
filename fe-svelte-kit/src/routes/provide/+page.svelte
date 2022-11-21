@@ -9,7 +9,7 @@
 	import { AmountInput, ActionButton, Title } from '../../components';
 	import { provide, getToken1ProvideEstimate, getToken2ProvideEstimate } from '../../contract';
 	import { load as loadHoldings } from '../../store/myHoldings';
-	import { watchSendTx } from '../../utils';
+	import { watchSendTx, present } from '../../utils';
 
 	export let data;
 
@@ -18,13 +18,19 @@
 	const myForm = form(token1Amount, token2Amount);
 	const { addNotification } = getNotificationsContext();
 
+	$: token1Balance = present($myHoldings?.token1Amount);
+	$: token2Balance = present($myHoldings?.token2Amount);
+
 	async function handleProvide() {
+		console.log($token1Amount.value);
+		console.log($token2Amount.value);
 		const txHash = await provide({
 			token1Amount: $token1Amount.value,
 			token2Amount: $token2Amount.value,
 			provider: $provider,
 			...data.contractData
 		});
+		console.log(txHash);
 
 		watchSendTx({
 			txHash,
@@ -79,7 +85,7 @@
 			label="Amount of Token1"
 			currencyTicker="₮1"
 			onTyping={handleToken1Typing}
-			currencyName="Balance: {$myHoldings ? $myHoldings.token1Amount : '...'}"
+			currencyName="Balance: {token1Balance}"
 		/>
 	</div>
 	<div>
@@ -89,7 +95,7 @@
 			label="Amount of Token2"
 			currencyTicker="₮2"
 			onTyping={handleToken2Typing}
-			currencyName="Balance: {$myHoldings ? $myHoldings.token2Amount : '...'}"
+			currencyName="Balance: {token2Balance}"
 		/>
 	</div>
 	<div class="flex flex-col items-center">

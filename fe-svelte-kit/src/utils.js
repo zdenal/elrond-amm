@@ -2,6 +2,7 @@ import { TransactionWatcher, TransactionHash } from '@elrondnetwork/erdjs';
 
 export const PRECISION = 1000000;
 export const FEE_PRECISION = 1000;
+export const TOKEN_PRECISION = 6;
 
 export function toDecimal(number) {
 	return (number / PRECISION).toFixed(2);
@@ -13,7 +14,11 @@ export function feeInPerc(fee) {
 
 export function present(value) {
 	const res = !!value ? value : '...';
-	return res;
+	return (res / 10 ** TOKEN_PRECISION).toFixed(TOKEN_PRECISION);
+}
+
+export function toWei(value) {
+	return Math.floor(value * 10 ** TOKEN_PRECISION);
 }
 
 export function capitilize(str) {

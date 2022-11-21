@@ -1,8 +1,12 @@
 <script>
 	let state = 'from';
+	import { createEventDispatcher } from 'svelte';
+
+	const dispatch = createEventDispatcher();
 
 	function swap() {
 		state = state == 'from' ? 'to' : 'from';
+		dispatch('swap');
 	}
 </script>
 

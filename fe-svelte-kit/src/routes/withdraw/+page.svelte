@@ -9,7 +9,7 @@
 	import { Title, ActionButton, AmountInput, Table, Row } from '../../components';
 	import { provider, contractData } from '../../stores';
 	import { myHoldings, load as loadHoldings } from '../../store/myHoldings';
-	import { toDecimal, watchSendTx } from '../../utils';
+	import { present, watchSendTx } from '../../utils';
 
 	export let data;
 
@@ -19,7 +19,7 @@
 	let estimatedToken1Amount = '...';
 	let estimatedToken2Amount = '...';
 
-	$: myBalance = $myHoldings ? toDecimal($myHoldings.sharesAmount) : undefined;
+	$: myBalance = $myHoldings ? present($myHoldings.sharesAmount) : undefined;
 	const { addNotification } = getNotificationsContext();
 
 	async function handleWithdraw() {
@@ -78,8 +78,8 @@
 	</div>
 	<div>
 		<Table>
-			<Row title="Amount of Token1">{estimatedToken1Amount}</Row>
-			<Row title="Amount of Token2">{estimatedToken2Amount}</Row>
+			<Row title="Amount of Token1">{present(estimatedToken1Amount)}</Row>
+			<Row title="Amount of Token2">{present(estimatedToken2Amount)}</Row>
 		</Table>
 	</div>
 </div>

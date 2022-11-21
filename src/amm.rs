@@ -205,7 +205,7 @@ pub trait Adder {
 
         let (token2_amount, fee_amount) = self.swap_token1_estimate(&pool_detail, &token1_amount);
 
-        require!(&token2_amount > &min_token2_amount, "Slippage exceed");
+        require!(&token2_amount >= &min_token2_amount, "Slippage exceed");
 
         self.token1_accounts()
             .entry(caller.clone())
@@ -242,7 +242,7 @@ pub trait Adder {
 
         let (token1_amount, fee_amount) = self.swap_token2_estimate(&pool_detail, &token2_amount);
 
-        require!(&token1_amount > &min_token1_amount, "Slippage exceed");
+        require!(&token1_amount >= &min_token1_amount, "Slippage exceed");
 
         self.token1_accounts()
             .entry(caller.clone())

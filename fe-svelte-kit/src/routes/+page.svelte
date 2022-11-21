@@ -44,7 +44,7 @@
 				{present($myHoldings?.token2Amount)}
 			</Row>
 			<Row title="Amount of Shares">
-				{present(toDecimal($myHoldings?.sharesAmount))}
+				{present($myHoldings?.sharesAmount)}
 			</Row>
 		</Table>
 	</div>
@@ -55,13 +55,13 @@
 	<div>
 		<Table>
 			<Row title="Total Token1">
-				{data.token1Total}
+				{present(data.token1Total)}
 			</Row>
 			<Row title="Total Token2">
-				{data.token2Total}
+				{present(data.token2Total)}
 			</Row>
 			<Row title="Total Share">
-				{toDecimal(data.sharesTotal)}
+				{present(data.sharesTotal)}
 			</Row>
 			<Row title="Trading Fee">
 				{feeInPerc(data.fee)}%

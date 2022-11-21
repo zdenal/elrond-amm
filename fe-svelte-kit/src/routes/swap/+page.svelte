@@ -15,8 +15,13 @@
 		Table,
 		Row
 	} from '../../components';
-	import { getSwapToken1Estimate, getSwapToken2Estimate, swapToken1 } from '../../contract';
-	import { watchSendTx, present } from '../../utils';
+	import {
+		getSwapToken1Estimate,
+		getSwapToken2Estimate,
+		swapToken1,
+		swapToken2
+	} from '../../contract';
+	import { watchSendTx, present, toWei } from '../../utils';
 
 	export let data;
 
@@ -26,20 +31,21 @@
 	const myForm = form(token1Amount, token2Amount);
 	const { addNotification } = getNotificationsContext();
 
-	$: token1Balance = $myHoldings?.token1Amount;
-	$: token2Balance = $myHoldings?.token2Amount;
+	$: token1Balance = present($myHoldings?.token1Amount);
+	$: token2Balance = present($myHoldings?.token2Amount);
+	$: fromTo = ['Token1', 'Token2'];
 
 	let feeAmount = undefined;
 	$: minAmount =
 		fromTo[1] == 'Token2'
-			? Math.floor(((100 - slippage) * $token2Amount.value) / 100)
-			: Math.floor(((100 - slippage) * $token1Amount.value) / 100);
+			? Math.floor(((100 - slippage) * toWei($token2Amount.value)) / 100)
+			: Math.floor(((100 - slippage) * toWei($token1Amount.value)) / 100);
 	let slippage = 1;
-	let fromTo = ['Token1', 'Token2'];
 
-	async function handleProvide() {
-		const txHash = await swapToken1({
-			amount: $token1Amount.value,
+	async function executeSwap() {
+		const method = fromTo[0] == 'Token1' ? swapToken1 : swapToken2;
+		const txHash = await method({
+			amount: toWei($token1Amount.value),
 			minAmount: minAmount,
 			provider: $provider,
 			...contractData
@@ -59,47 +65,48 @@
 	}
 
 	async function token1Estimate() {
-		if (!$provider || $token1Amount.value <= 0 || !$token1Amount.value) {
+		if (!$provider || parseFloat($token1Amount.value) <= 0 || !$token1Amount.value) {
 			feeAmount = '...';
 			await token2Amount.reset();
 			return;
 		}
 
-		if ($token1Amount.value > token1Balance) {
+		if (parseFloat($token1Amount.value) > parseFloat(token1Balance)) {
 			await token1Amount.set(token1Balance);
 		}
 
 		const { estimatedToken2Amount, feeAmount: _feeAmount } = await getSwapToken1Estimate({
-			token1Amount: $token1Amount.value,
+			token1Amount: toWei($token1Amount.value),
 			...contractData
 		});
 
 		feeAmount = _feeAmount;
-		await token2Amount.set(estimatedToken2Amount);
+		await token2Amount.set(present(estimatedToken2Amount));
 	}
 
 	async function token2Estimate() {
-		if (!$provider || $token2Amount.value <= 0 || !$token2Amount.value) {
+		if (!$provider || parseFloat($token2Amount.value) <= 0 || !$token2Amount.value) {
 			await token1Amount.reset();
 			return;
 		}
 
-		if ($token2Amount.value > token2Balance) {
+		if (parseFloat($token2Amount.value) > parseFloat(token2Balance)) {
 			await token2Amount.set(token2Balance);
 		}
 
 		const { estimatedToken1Amount, feeAmount: _feeAmount } = await getSwapToken2Estimate({
-			token2Amount: $token2Amount.value,
+			token2Amount: toWei($token2Amount.value),
 			...contractData
 		});
 
 		feeAmount = _feeAmount;
-		await token1Amount.set(estimatedToken1Amount);
+		await token1Amount.set(present(estimatedToken1Amount));
+	}
 
-		minAmount =
-			fromTo[1] == 'Token2'
-				? (100 - slippage) * $token2Amount.value
-				: (100 - slippage) * $token1Amount.value;
+	function handleSwap() {
+		fromTo = fromTo.reverse();
+		console.log(fromTo);
+		fromTo[0] == 'Token1' ? token1Estimate() : token2Estimate();
 	}
 </script>
 
@@ -107,14 +114,14 @@
 	<div>
 		<Title>Swap</Title>
 	</div>
-	<Swap>
+	<Swap on:swap={handleSwap}>
 		<div slot="from" style="margin-top: .5rem !important;">
 			<AmountInput
 				bind:value={$token1Amount.value}
 				onTyping={debounce(token1Estimate, 500)}
 				label="Amount of Token1"
 				currencyTicker="₮1"
-				currencyName="Balance: {present(token1Balance)}"
+				currencyName="Balance: {token1Balance}"
 			/>
 		</div>
 		<div slot="to" style="margin-top: .5rem !important;">
@@ -123,7 +130,7 @@
 				onTyping={debounce(token2Estimate, 500)}
 				label="Amount of Token2"
 				currencyTicker="₮2"
-				currencyName="Balance: {present(token2Balance)}"
+				currencyName="Balance: {token2Balance}"
 			/>
 		</div>
 	</Swap>
@@ -142,11 +149,6 @@
 		</Row>
 	</Table>
 	<div class="text-center">
-		<ActionButton
-			label="Provide"
-			actionMethod={handleProvide}
-			disabled={!$myForm.valid}
-			{provider}
-		/>
+		<ActionButton label="Swap" actionMethod={executeSwap} disabled={!$myForm.valid} {provider} />
 	</div>
 </div>

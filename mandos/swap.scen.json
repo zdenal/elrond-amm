@@ -1,0 +1,119 @@
+{
+  "name": "init",
+  "comment": "init then check",
+  "gasSchedule": "v3",
+  "steps": [
+    {
+      "step": "setState",
+      "accounts": {
+        "address:owner": {
+          "nonce": "1",
+          "balance": "0"
+        },
+        "address:zdenko": {
+          "nonce": "1",
+          "balance": "100"
+        }
+      },
+      "newAddresses": [
+        {
+          "creatorAddress": "address:owner",
+          "creatorNonce": "1",
+          "newAddress": "sc:adder"
+        }
+      ]
+    },
+    {
+      "step": "scDeploy",
+      "txId": "1",
+      "tx": {
+        "from": "address:owner",
+        "contractCode": "file:../output/amm.wasm",
+        "arguments": ["0"],
+        "gasLimit": "16,000,000",
+        "gasPrice": "0"
+      },
+      "expect": {
+        "out": [],
+        "status": "",
+        "logs": "*",
+        "gas": "*",
+        "refund": "*"
+      }
+    },
+    {
+      "step": "scCall",
+      "comment": "Faucet Adderr's address",
+      "txId": "2",
+      "tx": {
+        "to": "sc:adder",
+        "from": "address:zdenko",
+        "gasLimit": "13,000,000",
+        "gasPrice": "0",
+        "function": "faucet",
+        "arguments": ["900,000,000", "900,000.000"]
+      },
+      "expect": {
+        "out": [],
+        "status": "0",
+        "logs": []
+      }
+    },
+    {
+      "step": "scCall",
+      "comment": "provide to pool",
+      "txId": "3",
+      "tx": {
+        "to": "sc:adder",
+        "from": "address:zdenko",
+        "gasLimit": "13,000,000",
+        "gasPrice": "0",
+        "function": "provide",
+        "arguments": ["100,000,000", "600,000,000"]
+      },
+      "expect": {
+        "out": ["100,000000"],
+        "status": "0",
+        "logs": "*",
+        "gas": "*",
+        "refund": "*"
+      }
+    },
+    {
+      "step": "scCall",
+      "comment": "estimate swap token1 to token2",
+      "txId": "4",
+      "tx": {
+        "to": "sc:adder",
+        "from": "address:zdenko",
+        "gasLimit": "13,000,000",
+        "gasPrice": "0",
+        "function": "getSwapToken1Estimate",
+        "arguments": ["1,000,000"]
+      },
+      "expect": {
+        "out": ["biguint:5,940,595|biguint:0"],
+        "status": "0",
+        "logs": []
+      }
+    },
+    {
+      "step": "scCall",
+      "comment": "swap token1 to token2",
+      "txId": "5",
+      "tx": {
+        "to": "sc:adder",
+        "from": "address:zdenko",
+        "gasLimit": "13,000,000",
+        "gasPrice": "0",
+        "function": "swapToken1",
+        "arguments": ["1,000,000", "5,940,595"]
+      },
+      "expect": {
+        "out": ["biguint:5,940,595|biguint:0"],
+        "status": "0",
+        "logs": []
+      }
+    }
+  ]
+}

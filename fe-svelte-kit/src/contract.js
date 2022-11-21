@@ -14,9 +14,10 @@ import contractAbiJson from '../contract/amm.abi.json';
 import { PRECISION } from './utils';
 
 const parser = new ResultsParser();
+const ADDITIONAL_GAS = 4700000;
 
 export async function init() {
-	const networkProvider = new ProxyNetworkProvider('https://devnet-gateway.elrond.com');
+	const networkProvider = new ProxyNetworkProvider('https://testnet-gateway.elrond.com');
 	const networkConfig = await networkProvider.getNetworkConfig();
 	const abiRegistry = AbiRegistry.create(contractAbiJson);
 	const abi = new SmartContractAbi(abiRegistry, ['AMM']);
@@ -25,7 +26,10 @@ export async function init() {
 	//console.log(networkConfig.ChainID);
 
 	const contractAddress = new Address(
-		'erd1qqqqqqqqqqqqqpgqmq04sd9355zryhek7lly4a4sspxdwwg453ds53uesn'
+		// devnet
+		//'erd1qqqqqqqqqqqqqpgqmq04sd9355zryhek7lly4a4sspxdwwg453ds53uesn'
+		// testnet
+		'erd1qqqqqqqqqqqqqpgqgczuv6u6mgdewj4amsm5nnysk3404md253ds92srw6'
 	);
 	//const contract = new SmartContract({ address: contractAddress });
 	const contract = new SmartContract({ address: contractAddress, abi: abi });
@@ -74,7 +78,7 @@ export async function faucet({
 }) {
 	return await makeCall({
 		functionName: 'faucet',
-		gasLimit: networkConfig.MinGasLimit + 3000000,
+		gasLimit: networkConfig.MinGasLimit + ADDITIONAL_GAS,
 		args: [new BigIntValue(token1Amount), new BigIntValue(token2Amount)],
 		contract,
 		provider,
@@ -91,9 +95,12 @@ export async function provide({
 	networkProvider,
 	networkConfig
 }) {
+	console.log(token1Amount);
+	console.log(token2Amount);
+	console.log(provider);
 	return await makeCall({
 		functionName: 'provide',
-		gasLimit: networkConfig.MinGasLimit + 3500000,
+		gasLimit: networkConfig.MinGasLimit + ADDITIONAL_GAS,
 		args: [new BigIntValue(token1Amount), new BigIntValue(token2Amount)],
 		contract,
 		provider,
@@ -176,7 +183,26 @@ export async function swapToken1({
 }) {
 	return await makeCall({
 		functionName: 'swapToken1',
-		gasLimit: networkConfig.MinGasLimit + 3500000,
+		gasLimit: networkConfig.MinGasLimit + ADDITIONAL_GAS,
+		args: [new BigIntValue(amount), new BigIntValue(minAmount)],
+		contract,
+		provider,
+		networkProvider,
+		networkConfig
+	});
+}
+
+export async function swapToken2({
+	amount,
+	minAmount,
+	contract,
+	provider,
+	networkProvider,
+	networkConfig
+}) {
+	return await makeCall({
+		functionName: 'swapToken2',
+		gasLimit: networkConfig.MinGasLimit + ADDITIONAL_GAS,
 		args: [new BigIntValue(amount), new BigIntValue(minAmount)],
 		contract,
 		provider,
@@ -194,7 +220,7 @@ export async function withdraw({
 }) {
 	return await makeCall({
 		functionName: 'withdraw',
-		gasLimit: networkConfig.MinGasLimit + 3500000,
+		gasLimit: networkConfig.MinGasLimit + ADDITIONAL_GAS,
 		args: [new BigIntValue(shareAmount * PRECISION)],
 		contract,
 		provider,
