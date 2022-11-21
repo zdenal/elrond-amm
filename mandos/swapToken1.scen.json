@@ -49,7 +49,7 @@
         "to": "sc:adder",
         "function": "faucet",
         "from": "address:zdenko",
-        "gasLimit": "12,000,000",
+        "gasLimit": "13,000,000",
         "gasPrice": "0",
         "arguments": ["2,000,000", "2,000,000"]
       },

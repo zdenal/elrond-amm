@@ -162,8 +162,6 @@ pub trait Adder {
             .and_modify(|value| *value += &share)
             .or_insert(share.clone());
 
-        require!(share != 0, "Threshold not reached");
-
         let updated_detail = PoolDetail {
             token1_total: &token1_total + &token1_amount,
             token2_total: &token2_total + &token2_amount,
