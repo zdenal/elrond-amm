@@ -44,8 +44,9 @@
 
 	async function executeSwap() {
 		const method = fromTo[0] == 'Token1' ? swapToken1 : swapToken2;
+		const amount = fromTo[0] == 'Token1' ? $token1Amount.value : $token2Amount.value;
 		const txHash = await method({
-			amount: toWei($token1Amount.value),
+			amount: toWei(amount),
 			minAmount: minAmount,
 			provider: $provider,
 			...contractData
