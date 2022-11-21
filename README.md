@@ -28,7 +28,7 @@ python3 ./interaction/playground.py --pem=./wallet/walletKey.pem --proxy=https:/
 
 ## Once contract is deployed
 Once contract is deployed run interaction script w/ contract address you got from deploy step.
-The contract is already deployed on address `erd1qqqqqqqqqqqqqpgqmq04sd9355zryhek7lly4a4sspxdwwg453ds53uesn`
+The contract is already deployed on address `erd1qqqqqqqqqqqqqpgqmq04sd9355zryhek7lly4a4sspxdwwg453ds53uesn` (devnet) or `erd1qqqqqqqqqqqqqpgqgczuv6u6mgdewj4amsm5nnysk3404md253ds92srw6` (testnet)
 ```
 python3 ./interaction/playground.py --pem=./wallet/walletKey.pem --proxy=https://devnet-gateway.elrond.com --contract CONTRACT_ADDRESS_FROM_DEPLOY_STEP
 ```
