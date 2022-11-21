@@ -6,6 +6,7 @@
 	import { myHoldings, load as loadHoldings } from '../../store/myHoldings';
 	import { provider } from '../../stores';
 	import { feeInPerc } from '../../utils';
+	import { TOKEN1, TOKEN2, TOKEN1_TICKER, TOKEN2_TICKER } from '../../constants.js';
 	import {
 		AmountInput,
 		ActionButton,
@@ -33,18 +34,18 @@
 
 	$: token1Balance = present($myHoldings?.token1Amount);
 	$: token2Balance = present($myHoldings?.token2Amount);
-	$: fromTo = ['Token1', 'Token2'];
+	$: fromTo = [TOKEN1, TOKEN2];
 
 	let feeAmount = undefined;
 	$: minAmount =
-		fromTo[1] == 'Token2'
+		fromTo[1] == TOKEN2
 			? Math.floor(((100 - slippage) * toWei($token2Amount.value)) / 100)
 			: Math.floor(((100 - slippage) * toWei($token1Amount.value)) / 100);
 	let slippage = 1;
 
 	async function executeSwap() {
-		const method = fromTo[0] == 'Token1' ? swapToken1 : swapToken2;
-		const amount = fromTo[0] == 'Token1' ? $token1Amount.value : $token2Amount.value;
+		const method = fromTo[0] == TOKEN1 ? swapToken1 : swapToken2;
+		const amount = fromTo[0] == TOKEN1 ? $token1Amount.value : $token2Amount.value;
 		const txHash = await method({
 			amount: toWei(amount),
 			minAmount: minAmount,
@@ -107,7 +108,7 @@
 	function handleSwap() {
 		fromTo = fromTo.reverse();
 		console.log(fromTo);
-		fromTo[0] == 'Token1' ? token1Estimate() : token2Estimate();
+		fromTo[0] == TOKEN1 ? token1Estimate() : token2Estimate();
 	}
 </script>
 
@@ -120,8 +121,8 @@
 			<AmountInput
 				bind:value={$token1Amount.value}
 				onTyping={debounce(token1Estimate, 500)}
-				label="Amount of Token1"
-				currencyTicker="₮1"
+				label="Amount of {TOKEN1}"
+				currencyTicker={TOKEN1_TICKER}
 				currencyName="Balance: {token1Balance}"
 			/>
 		</div>
@@ -129,8 +130,8 @@
 			<AmountInput
 				bind:value={$token2Amount.value}
 				onTyping={debounce(token2Estimate, 500)}
-				label="Amount of Token2"
-				currencyTicker="₮2"
+				label="Amount of {TOKEN2}"
+				currencyTicker={TOKEN2_TICKER}
 				currencyName="Balance: {token2Balance}"
 			/>
 		</div>
@@ -142,7 +143,7 @@
 		</ButtonGroupSelect>
 	</div>
 	<Table>
-		<Row title="Trading fee ({feeInPerc(poolDetail.fee)}%) ₮1">
+		<Row title="Trading fee ({feeInPerc(poolDetail.fee)}%) {TOKEN1_TICKER}">
 			{present(feeAmount)}
 		</Row>
 		<Row title="Minimum {fromTo[1]} you receive">

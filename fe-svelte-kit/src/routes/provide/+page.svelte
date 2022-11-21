@@ -10,6 +10,7 @@
 	import { provide, getToken1ProvideEstimate, getToken2ProvideEstimate } from '../../contract';
 	import { load as loadHoldings } from '../../store/myHoldings';
 	import { watchSendTx, present } from '../../utils';
+	import { TOKEN1, TOKEN2, TOKEN1_TICKER, TOKEN2_TICKER } from '../../constants.js';
 
 	export let data;
 
@@ -82,8 +83,8 @@
 		<AmountInput
 			disabled={!$provider}
 			bind:value={$token1Amount.value}
-			label="Amount of Token1"
-			currencyTicker="₮1"
+			label="Amount of {TOKEN1}"
+			currencyTicker={TOKEN1_TICKER}
 			onTyping={handleToken1Typing}
 			currencyName="Balance: {token1Balance}"
 		/>
@@ -92,8 +93,8 @@
 		<AmountInput
 			disabled={!$provider}
 			bind:value={$token2Amount.value}
-			label="Amount of Token2"
-			currencyTicker="₮2"
+			label="Amount of {TOKEN2}"
+			currencyTicker={TOKEN2_TICKER}
 			onTyping={handleToken2Typing}
 			currencyName="Balance: {token2Balance}"
 		/>

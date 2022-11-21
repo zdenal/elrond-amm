@@ -10,6 +10,7 @@
 	import { provider, contractData } from '../../stores';
 	import { myHoldings, load as loadHoldings } from '../../store/myHoldings';
 	import { present, watchSendTx } from '../../utils';
+	import { TOKEN1, TOKEN2 } from '../../constants.js';
 
 	export let data;
 
@@ -78,8 +79,8 @@
 	</div>
 	<div>
 		<Table>
-			<Row title="Amount of Token1">{present(estimatedToken1Amount)}</Row>
-			<Row title="Amount of Token2">{present(estimatedToken2Amount)}</Row>
+			<Row title="Amount of {TOKEN1}">{present(estimatedToken1Amount)}</Row>
+			<Row title="Amount of {TOKEN2}">{present(estimatedToken2Amount)}</Row>
 		</Table>
 	</div>
 </div>

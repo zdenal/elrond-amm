@@ -11,6 +11,7 @@
 
 	import { AmountInput, ActionButton, WalletConnect, Title } from '../../components';
 	import { watchSendTx } from '../../utils';
+	import { TOKEN1, TOKEN2, TOKEN1_TICKER, TOKEN2_TICKER } from '../../constants.js';
 
 	export let data;
 
@@ -52,17 +53,17 @@
 	<div>
 		<AmountInput
 			bind:value={$token1Amount.value}
-			label="Amount of Token1"
-			currencyName="Token1"
-			currencyTicker="₮1"
+			label="Amount of {TOKEN1}"
+			currencyName={TOKEN1}
+			currencyTicker={TOKEN1_TICKER}
 		/>
 	</div>
 	<div>
 		<AmountInput
 			bind:value={$token2Amount.value}
-			label="Amount of Token2"
-			currencyName="Token2"
-			currencyTicker="₮2"
+			label="Amount of {TOKEN2}"
+			currencyName={TOKEN2}
+			currencyTicker={TOKEN2_TICKER}
 		/>
 	</div>
 	<div class="flex flex-col items-center">

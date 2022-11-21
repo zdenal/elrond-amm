@@ -5,6 +5,7 @@
 	import { openModal } from 'svelte-modals';
 	import { provider } from '../stores.js';
 	import { toDecimal, feeInPerc, present } from '../utils.js';
+	import { TOKEN1, TOKEN2 } from '../constants.js';
 	import { myHoldings } from '../store/myHoldings';
 
 	import { ActionButton, WalletConnect, Table, Row } from '../components';
@@ -37,10 +38,10 @@
 	</div>
 	<div>
 		<Table>
-			<Row title="Amount of Token1">
+			<Row title="Amount of {TOKEN1}">
 				{present($myHoldings?.token1Amount)}
 			</Row>
-			<Row title="Amount of Token2">
+			<Row title="Amount of {TOKEN2}">
 				{present($myHoldings?.token2Amount)}
 			</Row>
 			<Row title="Amount of Shares">
@@ -54,10 +55,10 @@
 	</div>
 	<div>
 		<Table>
-			<Row title="Total Token1">
+			<Row title="Total {TOKEN1}">
 				{present(data.token1Total)}
 			</Row>
-			<Row title="Total Token2">
+			<Row title="Total {TOKEN2}">
 				{present(data.token2Total)}
 			</Row>
 			<Row title="Total Share">
