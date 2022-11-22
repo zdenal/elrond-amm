@@ -61,6 +61,12 @@
 			<Row title="Total {TOKEN2}">
 				{present(data.token2Total)}
 			</Row>
+			<Row title="Rate {TOKEN1}/{TOKEN2}">
+				{data.token1Total / data.token2Total}
+			</Row>
+			<Row title="Constant">
+				{present(data.token1Total * data.token2Total)}
+			</Row>
 			<Row title="Total Share">
 				{present(data.sharesTotal)}
 			</Row>

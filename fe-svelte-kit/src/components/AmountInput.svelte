@@ -19,7 +19,7 @@
 			on:keyup={onTyping}
 			type="number"
 			name="price"
-			class="block w-full rounded-md border-gray-300 pl-9 pr-12 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+			class="block w-full rounded-md border-gray-300 pl-12 pr-12 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
 			placeholder="0"
 			aria-describedby="price-currency"
 		/>
