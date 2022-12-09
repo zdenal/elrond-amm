@@ -62,6 +62,20 @@ pub trait Adder {
     }
 
     #[endpoint]
+    fn set_fee(&self, fee: BigUint) {
+        self.fee().set(fee);
+
+        let pool_detail = self.pool_detail().get();
+
+        let updated_pool_detail = PoolDetail {
+            fee: self.fee().get(),
+            ..pool_detail
+        };
+
+        self.pool_detail().set(updated_pool_detail);
+    }
+
+    #[endpoint]
     fn faucet(&self, token1_amount: BigUint, token2_amount: BigUint) {
         let caller = self.blockchain().get_caller();
 

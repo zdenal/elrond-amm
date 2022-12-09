@@ -8,6 +8,10 @@ export function toDecimal(number) {
 	return (number / PRECISION).toFixed(2);
 }
 
+export function withTokenPrecision(number) {
+	return number.toFixed(TOKEN_PRECISION);
+}
+
 export function feeInPerc(fee) {
 	return fee / FEE_PRECISION;
 }

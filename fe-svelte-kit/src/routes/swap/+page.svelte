@@ -5,7 +5,6 @@
 	import { getNotificationsContext } from 'svelte-notifications';
 	import { myHoldings, load as loadHoldings } from '../../store/myHoldings';
 	import { provider } from '../../stores';
-	import { feeInPerc } from '../../utils';
 	import { TOKEN1, TOKEN2, TOKEN1_TICKER, TOKEN2_TICKER } from '../../constants.js';
 	import {
 		AmountInput,
@@ -22,7 +21,7 @@
 		swapToken1,
 		swapToken2
 	} from '../../contract';
-	import { watchSendTx, present, toWei } from '../../utils';
+	import { watchSendTx, present, toWei, feeInPerc } from '../../utils';
 
 	export let data;
 

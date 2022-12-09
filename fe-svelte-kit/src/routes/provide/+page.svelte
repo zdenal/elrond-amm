@@ -9,7 +9,7 @@
 	import { AmountInput, ActionButton, Title } from '../../components';
 	import { provide, getToken1ProvideEstimate, getToken2ProvideEstimate } from '../../contract';
 	import { load as loadHoldings } from '../../store/myHoldings';
-	import { watchSendTx, present } from '../../utils';
+	import { watchSendTx, present, toWei } from '../../utils';
 	import { TOKEN1, TOKEN2, TOKEN1_TICKER, TOKEN2_TICKER } from '../../constants.js';
 
 	export let data;
@@ -26,8 +26,8 @@
 		console.log($token1Amount.value);
 		console.log($token2Amount.value);
 		const txHash = await provide({
-			token1Amount: $token1Amount.value,
-			token2Amount: $token2Amount.value,
+			token1Amount: toWei($token1Amount.value),
+			token2Amount: toWei($token2Amount.value),
 			provider: $provider,
 			...data.contractData
 		});
@@ -47,11 +47,11 @@
 		const amount = $token1Amount.value;
 		if (amount) {
 			const token2EstimateAmount = await getToken2ProvideEstimate({
-				token1Amount: amount,
+				token1Amount: toWei(amount),
 				provider: $provider,
 				...data.contractData
 			});
-			token2Amount.set(token2EstimateAmount);
+			token2Amount.set(present(token2EstimateAmount));
 		} else {
 			token2Amount.set(0);
 		}
@@ -61,11 +61,11 @@
 		const amount = $token2Amount.value;
 		if (amount) {
 			const token1EstimateAmount = await getToken1ProvideEstimate({
-				token2Amount: amount,
+				token2Amount: toWei(amount),
 				provider: $provider,
 				...data.contractData
 			});
-			token1Amount.set(token1EstimateAmount);
+			token1Amount.set(present(token1EstimateAmount));
 		} else {
 			token1Amount.set(0);
 		}

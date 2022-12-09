@@ -100,12 +100,30 @@ if __name__ == '__main__':
 
     user.sync_nonce(ElrondProxy(args.proxy))
 
+    def set_fee(hex_number):
+        tx = contract.execute(
+            caller=user,
+            function="set_fee",
+            arguments=[hex_number],
+            gas_price=gas_price,
+            gas_limit=50000000,
+            value=0,
+            chain=chain,
+            version=tx_version
+        )
+
+        tx_hash = tx.send(proxy)
+        logger.info("Tx hash: %s", tx_hash)
+
+    user.sync_nonce(ElrondProxy(args.proxy))
+
     while True:
         print("Let's run a flow.")
         print("1. Deploy")
         print("2. Query getPoolDetail()")
         print("3. Add()")
         print("4. Upgrade")
+        print("5. Set fee()")
 
         try:
             choice = int(input("Choose:\n"))
@@ -123,4 +141,8 @@ if __name__ == '__main__':
             user.nonce += 1
         elif choice == 4:
             do_upgrade()
+            user.nonce += 1
+        elif choice == 5:
+            hex_number = input("Enter hex number:")
+            set_fee(hex_number)
             user.nonce += 1

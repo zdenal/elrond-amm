@@ -16,6 +16,7 @@ elrond_wasm_node::wasm_endpoints! {
         getToken2ProvideEstimate
         getWithdrawEstimate
         provide
+        set_fee
         swapToken1
         swapToken2
         withdraw

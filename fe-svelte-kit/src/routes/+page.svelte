@@ -4,11 +4,14 @@
 
 	import { openModal } from 'svelte-modals';
 	import { provider } from '../stores.js';
-	import { toDecimal, feeInPerc, present } from '../utils.js';
+	import { toWei, toDecimal, feeInPerc, present } from '../utils.js';
 	import { TOKEN1, TOKEN2 } from '../constants.js';
 	import { myHoldings } from '../store/myHoldings';
 
 	import { ActionButton, WalletConnect, Table, Row } from '../components';
+
+	$: poolK = data.token1Total * data.token2Total;
+	$: rate = data.token2Total - poolK / (data.token1Total + toWei(1));
 
 	function handleClick() {
 		openModal(WalletConnect, { provider });
@@ -61,11 +64,11 @@
 			<Row title="Total {TOKEN2}">
 				{present(data.token2Total)}
 			</Row>
-			<Row title="Rate {TOKEN1}/{TOKEN2}">
-				{data.token1Total / data.token2Total}
+			<Row title="Rate 1 {TOKEN1}">
+				{present(rate)}
 			</Row>
-			<Row title="Constant">
-				{present(data.token1Total * data.token2Total)}
+			<Row title="Pool k">
+				{poolK}
 			</Row>
 			<Row title="Total Share">
 				{present(data.sharesTotal)}
