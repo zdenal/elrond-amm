@@ -68,7 +68,7 @@
 				{present(rate)}
 			</Row>
 			<Row title="Pool k">
-				{poolK}
+				{present(present(poolK))}
 			</Row>
 			<Row title="Total Share">
 				{present(data.sharesTotal)}
