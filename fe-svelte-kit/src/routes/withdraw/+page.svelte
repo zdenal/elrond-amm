@@ -79,8 +79,14 @@
 	</div>
 	<div>
 		<Table>
-			<Row title="Amount of {TOKEN1}">{present(estimatedToken1Amount)}</Row>
-			<Row title="Amount of {TOKEN2}">{present(estimatedToken2Amount)}</Row>
+			<Row title="Amount of {TOKEN1}">
+				{present(estimatedToken1Amount)}
+				(holding {present($myHoldings?.token1Amount)})
+			</Row>
+			<Row title="Amount of {TOKEN2}">
+				{present(estimatedToken2Amount)}
+				(holding {present($myHoldings?.token2Amount)})
+			</Row>
 		</Table>
 	</div>
 </div>
