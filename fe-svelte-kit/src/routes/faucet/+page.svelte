@@ -7,10 +7,10 @@
 
 	import { faucet } from '../../contract';
 	import { provider, contractData } from '../../stores';
-	import { load as loadHoldings } from '../../store/myHoldings';
+	import { myHoldings, load as loadHoldings } from '../../store/myHoldings';
 
 	import { AmountInput, ActionButton, WalletConnect, Title } from '../../components';
-	import { watchSendTx } from '../../utils';
+	import { watchSendTx, present, toWei } from '../../utils';
 	import { TOKEN1, TOKEN2, TOKEN1_TICKER, TOKEN2_TICKER } from '../../constants.js';
 
 	export let data;
@@ -21,11 +21,14 @@
 	const token2Amount = field('token2Amount', 50, [required()]);
 	const myForm = form(token1Amount, token2Amount);
 
+	$: token1Balance = present($myHoldings?.token1Amount);
+	$: token2Balance = present($myHoldings?.token2Amount);
+
 	async function handleFaucet() {
 		if ($provider) {
 			const txHash = await faucet({
-				token1Amount: $token1Amount.value,
-				token2Amount: $token2Amount.value,
+				token1Amount: toWei($token1Amount.value),
+				token2Amount: toWei($token2Amount.value),
 				provider: $provider,
 				...data.contractData
 			});
@@ -54,16 +57,16 @@
 		<AmountInput
 			bind:value={$token1Amount.value}
 			label="Amount of {TOKEN1}"
-			currencyName={TOKEN1}
 			currencyTicker={TOKEN1_TICKER}
+			currencyName="Balance: {token1Balance}"
 		/>
 	</div>
 	<div>
 		<AmountInput
 			bind:value={$token2Amount.value}
 			label="Amount of {TOKEN2}"
-			currencyName={TOKEN2}
 			currencyTicker={TOKEN2_TICKER}
+			currencyName="Balance: {token2Balance}"
 		/>
 	</div>
 	<div class="flex flex-col items-center">

@@ -23,8 +23,6 @@
 	$: token2Balance = present($myHoldings?.token2Amount);
 
 	async function handleProvide() {
-		console.log($token1Amount.value);
-		console.log($token2Amount.value);
 		const txHash = await provide({
 			token1Amount: toWei($token1Amount.value),
 			token2Amount: toWei($token2Amount.value),

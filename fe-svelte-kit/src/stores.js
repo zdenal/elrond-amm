@@ -3,8 +3,7 @@ import { writable } from 'svelte/store';
 export const contractData = writable();
 
 //const storedProvider = typeof localStorage !== 'undefined' && localStorage.getItem('provider');
-//console.log(storedProvider);
-//export const provider = writable(JSON.parse(storedProvider));
+//export const provider = !!storedProvider ? writable(JSON.parse(storedProvider)) : writable();
 export const provider = writable();
 
 //if (typeof localStorage !== 'undefined') {

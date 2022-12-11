@@ -28,6 +28,9 @@ if __name__ == '__main__':
 
     user = Account(pem_file=args.pem)
 
+    print("User address:");
+    print(user.address);
+
     project = ProjectRust(Path(__file__).parent.parent)
     bytecode = project.get_bytecode()
 
@@ -83,11 +86,33 @@ if __name__ == '__main__':
         answer = contract.query(proxy, "getPoolDetail", [])
         logger.info(f"Answer: {answer}")
 
+    def get_holdings():
+        print(user.address)
+        answer = contract.query(proxy, "getMyHoldings", [], value=0, caller=user.address)
+        logger.info(f"Answer: {answer}")
+
     def add_flow(number):
         tx = contract.execute(
             caller=user,
             function="add",
             arguments=[number],
+            gas_price=gas_price,
+            gas_limit=50000000,
+            value=0,
+            chain=chain,
+            version=tx_version
+        )
+
+        tx_hash = tx.send(proxy)
+        logger.info("Tx hash: %s", tx_hash)
+
+    user.sync_nonce(ElrondProxy(args.proxy))
+
+    def do_faucet():
+        tx = contract.execute(
+            caller=user,
+            function="faucet",
+            arguments=[50000000,50000000],
             gas_price=gas_price,
             gas_limit=50000000,
             value=0,
@@ -124,6 +149,8 @@ if __name__ == '__main__':
         print("3. Add()")
         print("4. Upgrade")
         print("5. Set fee()")
+        print("6. Query myHoldings()")
+        print("7. Do faucet()")
 
         try:
             choice = int(input("Choose:\n"))
@@ -146,3 +173,7 @@ if __name__ == '__main__':
             hex_number = input("Enter hex number:")
             set_fee(hex_number)
             user.nonce += 1
+        elif choice == 6:
+            get_holdings()
+        elif choice == 7:
+            do_faucet()
