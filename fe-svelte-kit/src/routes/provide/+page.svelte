@@ -29,7 +29,6 @@
 			provider: $provider,
 			...data.contractData
 		});
-		console.log(txHash);
 
 		watchSendTx({
 			txHash,
@@ -39,6 +38,9 @@
 			},
 			addNotification: addNotification
 		});
+
+		await token1Amount.reset();
+		await token2Amount.reset();
 	}
 
 	async function getToken2Estimation() {

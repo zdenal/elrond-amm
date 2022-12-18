@@ -17,8 +17,8 @@
 
 	const { addNotification } = getNotificationsContext();
 
-	const token1Amount = field('token1Amount', 50, [required()]);
-	const token2Amount = field('token2Amount', 50, [required()]);
+	const token1Amount = field('token1Amount', 0, [required()]);
+	const token2Amount = field('token2Amount', 0, [required()]);
 	const myForm = form(token1Amount, token2Amount);
 
 	$: token1Balance = present($myHoldings?.token1Amount);
@@ -42,6 +42,9 @@
 				addNotification: addNotification
 			});
 		}
+
+		await token1Amount.reset();
+		await token2Amount.reset();
 	}
 
 	function handleConnect() {

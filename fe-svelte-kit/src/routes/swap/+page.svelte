@@ -63,6 +63,9 @@
 			},
 			addNotification: addNotification
 		});
+
+		await token1Amount.reset();
+		await token2Amount.reset();
 	}
 
 	async function token1Estimate() {
@@ -106,7 +109,6 @@
 
 	function handleSwap() {
 		fromTo = fromTo.reverse();
-		console.log(fromTo);
 		fromTo[0] == TOKEN1 ? token1Estimate() : token2Estimate();
 	}
 </script>

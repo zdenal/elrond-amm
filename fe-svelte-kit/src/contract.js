@@ -95,9 +95,6 @@ export async function provide({
 	networkProvider,
 	networkConfig
 }) {
-	console.log(token1Amount);
-	console.log(token2Amount);
-	console.log(provider);
 	return await makeCall({
 		functionName: 'provide',
 		gasLimit: networkConfig.MinGasLimit + ADDITIONAL_GAS,

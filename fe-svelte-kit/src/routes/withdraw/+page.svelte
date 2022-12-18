@@ -38,6 +38,8 @@
 			},
 			addNotification: addNotification
 		});
+
+		await shareAmount.reset();
 	}
 
 	async function getEstimation() {
