@@ -1,9 +1,11 @@
+Example of simple Automated Market Maker on Elrond network for studying purpose.
 Inspired by tutorial https://learn.figment.io/tutorials/build-polkadot-amm-using-ink.
 
 Working example: https://amm-elrond.netlify.app/
 
 # Run FE
-Please check comments which polyfill use for local dev and for production release in `vite.config.js`.
+Please check comments which polyfill use for local dev and for production release in [vite.config.js](./fe-svelte-kit/vite.config.js).
+
 In `fe-svelte-kit` directory run:
 ```
 pnpm install
@@ -12,7 +14,7 @@ pnpm run dev
 
 # Tests
 
-Run test:
+Run tests:
 NOTE: only my local ... if there is issue with compiling contract (`..unknown command: cargo.`) remove rust from `asdf` as it is in some collision w/ rustup.
 ```
 erdpy contract build
