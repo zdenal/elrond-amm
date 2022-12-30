@@ -37,6 +37,7 @@
 	"type": "module",
 	"dependencies": {
 		"@elrondnetwork/erdjs": "^11.1.2",
+		"@elrondnetwork/erdjs-extension-provider": "^2.0.5",
 		"@elrondnetwork/erdjs-network-providers": "^1.2.0",
 		"events": "^3.3.0",
 		"lodash": "^4.17.21",

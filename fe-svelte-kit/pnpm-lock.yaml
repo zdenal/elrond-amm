@@ -2,6 +2,7 @@ lockfileVersion: 5.4
 
 specifiers:
   '@elrondnetwork/erdjs': ^11.1.2
+  '@elrondnetwork/erdjs-extension-provider': ^2.0.5
   '@elrondnetwork/erdjs-network-providers': ^1.2.0
   '@playwright/test': ^1.29.1
   '@sveltejs/adapter-auto': next
@@ -33,6 +34,7 @@ specifiers:
 
 dependencies:
   '@elrondnetwork/erdjs': 11.1.2
+  '@elrondnetwork/erdjs-extension-provider': 2.0.5
   '@elrondnetwork/erdjs-network-providers': 1.2.0
   events: 3.3.0
   lodash: 4.17.21
@@ -65,6 +67,10 @@ devDependencies:
   vite-plugin-node-stdlib-browser: 0.1.1_da2whqgczxruz5nz7cgzq7ar3m
 
 packages:
+
+  /@elrondnetwork/erdjs-extension-provider/2.0.5:
+    resolution: {integrity: sha512-lmKj5qjJgbc/C32BU0oxddtcp+TZeJ+9C7Pe0UtETDfW90aGUdWfUuSFVjlZEiIbFgv42b5zDKZiXcnUqiHgqw==}
+    dev: false
 
   /@elrondnetwork/erdjs-network-providers/1.2.0:
     resolution: {integrity: sha512-ANh7tDaRohQos9WzZsZS/kyqatUqxY2NqncsKnWhDeSHqYv3RZiwcF3siKsBiWHYiP5hKqIACK1+Wsq3P0ocMg==}
