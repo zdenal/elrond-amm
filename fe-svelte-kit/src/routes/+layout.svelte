@@ -11,7 +11,7 @@
 
 <Notifications>
 	<Modals>
-		<div slot="backdrop" on:click={closeModal} />
+		<div slot="backdrop" on:keydown={closeModal} />
 	</Modals>
 
 	<div class="min-h-full">

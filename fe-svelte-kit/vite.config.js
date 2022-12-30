@@ -1,6 +1,5 @@
 import { sveltekit } from '@sveltejs/kit/vite';
-import { NodeGlobalsPolyfillPlugin } from '@esbuild-plugins/node-globals-polyfill';
-import nodePolyfills from 'rollup-plugin-node-polyfills';
+import nodePolyfills from 'vite-plugin-node-stdlib-browser';
 
 // *******************************************************************************
 // *******************************************************************************
@@ -17,22 +16,10 @@ import nodePolyfills from 'rollup-plugin-node-polyfills';
 
 /** @type {import('vite').UserConfig} */
 const config = {
-	plugins: [sveltekit()],
+	plugins: [sveltekit(), nodePolyfills()],
 	define: {
-		global: {},
+		global: '({})',
 		'process.env': {}
-	},
-	optimizeDeps: {
-		esbuildOptions: {
-			plugins: [NodeGlobalsPolyfillPlugin({ buffer: true })],
-			target: 'es2020'
-		}
-	},
-	build: {
-		target: 'es2020',
-		rollupOptions: {
-			plugins: [nodePolyfills()]
-		}
 	},
 	server: {
 		fs: { allow: ['contract'] }

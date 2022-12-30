@@ -138,7 +138,7 @@
 		</div>
 	</Swap>
 	<div class="text-center">
-		<label class="block text-sm font-medium text-gray-700">Slippage tolerance</label>
+		<span class="block text-sm font-medium text-gray-700">Slippage tolerance</span>
 		<ButtonGroupSelect items={[0.5, 1, 2, 5]} bind:selected={slippage} let:item>
 			{item}%
 		</ButtonGroupSelect>

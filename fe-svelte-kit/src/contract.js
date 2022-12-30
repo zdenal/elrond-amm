@@ -17,7 +17,8 @@ const parser = new ResultsParser();
 const ADDITIONAL_GAS = 4700000;
 
 export async function init() {
-	const networkProvider = new ProxyNetworkProvider('https://testnet-gateway.elrond.com');
+	//const networkProvider = new ProxyNetworkProvider('https://testnet-gateway.elrond.com');
+	const networkProvider = new ProxyNetworkProvider('https://devnet-gateway.elrond.com');
 	const networkConfig = await networkProvider.getNetworkConfig();
 	const abiRegistry = AbiRegistry.create(contractAbiJson);
 	const abi = new SmartContractAbi(abiRegistry, ['AMM']);
@@ -27,9 +28,9 @@ export async function init() {
 
 	const contractAddress = new Address(
 		// devnet
-		//'erd1qqqqqqqqqqqqqpgqmq04sd9355zryhek7lly4a4sspxdwwg453ds53uesn'
+		'erd1qqqqqqqqqqqqqpgqmq04sd9355zryhek7lly4a4sspxdwwg453ds53uesn'
 		// testnet
-		'erd1qqqqqqqqqqqqqpgqgczuv6u6mgdewj4amsm5nnysk3404md253ds92srw6'
+		//'erd1qqqqqqqqqqqqqpgqgczuv6u6mgdewj4amsm5nnysk3404md253ds92srw6'
 	);
 	//const contract = new SmartContract({ address: contractAddress });
 	const contract = new SmartContract({ address: contractAddress, abi: abi });
