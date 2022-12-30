@@ -1,6 +1,9 @@
 Inspired by tutorial https://learn.figment.io/tutorials/build-polkadot-amm-using-ink.
 
+Working example: https://amm-elrond.netlify.app/
+
 # Run FE
+Please check comments which polyfill use for local dev and for production release in `vite.config.js`.
 In `fe-svelte-kit` directory run:
 ```
 pnpm install

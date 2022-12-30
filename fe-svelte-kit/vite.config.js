@@ -1,6 +1,8 @@
 import { sveltekit } from '@sveltejs/kit/vite';
+// !!!! FOR LOCAL DEV USE:
 //import nodePolyfills from 'vite-plugin-node-stdlib-browser';
-import { NgmiPolyfill } from 'vite-plugin-ngmi-polyfill';
+// !!!! FOR PRODUCTION BUILD USE:
+import { NgmiPolyfill as nodePolyfills } from 'vite-plugin-ngmi-polyfill';
 
 // *******************************************************************************
 // *******************************************************************************
@@ -17,10 +19,8 @@ import { NgmiPolyfill } from 'vite-plugin-ngmi-polyfill';
 
 /** @type {import('vite').UserConfig} */
 const config = {
-	// !!!! FOR PRODUCTION BUILD USE:
-	plugins: [sveltekit(), NgmiPolyfill()],
-	// !!!! FOR LOCAL DEV USE:
-	//plugins: [sveltekit(), nodePolyfills()],
+	//plugins: [sveltekit(), NgmiPolyfill()],
+	plugins: [sveltekit(), nodePolyfills()],
 	define: {
 		global: '({})',
 		'process.env': {}
