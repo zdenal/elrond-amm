@@ -15,6 +15,7 @@
 	"devDependencies": {
 		"@playwright/test": "^1.29.1",
 		"@sveltejs/adapter-auto": "next",
+		"@sveltejs/adapter-netlify": "1.0.0-next.88",
 		"@sveltejs/kit": "1.0.1",
 		"@tailwindcss/forms": "^0.5.3",
 		"@tailwindcss/typography": "^0.5.8",
