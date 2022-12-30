@@ -1,9 +1,14 @@
+# AMM
 Example of simple Automated Market Maker on Elrond network for studying purpose.
+
 Inspired by tutorial https://learn.figment.io/tutorials/build-polkadot-amm-using-ink.
 
 Working example: https://amm-elrond.netlify.app/
 
-# Run FE
+https://user-images.githubusercontent.com/143357/210095255-3633ec8b-c1b7-4569-82b5-e30a319068f4.mov
+
+
+## Run FE
 Please check comments which polyfill use for local dev and for production release in [vite.config.js](./fe-svelte-kit/vite.config.js).
 
 In `fe-svelte-kit` directory run:
@@ -12,7 +17,7 @@ pnpm install
 pnpm run dev
 ```
 
-# Tests
+## Tests
 
 Run tests:
 NOTE: only my local ... if there is issue with compiling contract (`..unknown command: cargo.`) remove rust from `asdf` as it is in some collision w/ rustup.
@@ -21,11 +26,11 @@ erdpy contract build
 erdpy contract test
 ```
 
-# Interaction (deploy, querying, ...)
+## Interaction (deploy, querying, ...)
 In examples is proxy set to https://devnet-gateway.elrond.com, change it if you want to work
 with different chain
 
-## For deploy/upgrade
+### For deploy/upgrade
 Run interaction python script and chose `1. Deploy`
 ```
 python3 ./interaction/playground.py --pem=./wallet/walletKey.pem --proxy=https://devnet-gateway.elrond.com
@@ -33,7 +38,7 @@ python3 ./interaction/playground.py --pem=./wallet/walletKey.pem --proxy=https:/
 
 The contract is already deployed on address `erd1qqqqqqqqqqqqqpgqmq04sd9355zryhek7lly4a4sspxdwwg453ds53uesn` (devnet) or `erd1qqqqqqqqqqqqqpgqgczuv6u6mgdewj4amsm5nnysk3404md253ds92srw6` (testnet)
 
-# Docs
+## Docs
 - https://docs.rs/elrond-wasm/latest/elrond_wasm/
 - https://docs.elrond.com/developers/overview/
 - https://docs.elrond.com/sdk-and-tools/erdjs/erdjs/
