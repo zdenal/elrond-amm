@@ -35,7 +35,7 @@ Arbitrage is a strategy where traders capitalize on a slight price discrepancy o
 
 
 ## Run FE
-Please check comments which polyfill use for local dev and for production release in [vite.config.js](./fe-svelte-kit/vite.config.js).
+Please check comments which polyfill to use for local dev and for production release in [vite.config.js](./fe-svelte-kit/vite.config.js).
 
 In `fe-svelte-kit` directory run:
 ```
