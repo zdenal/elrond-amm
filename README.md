@@ -20,6 +20,12 @@ Collection of tokens or digital assets locked in a smart contract that provide e
 A DEX is an exchange that doesn't rely on a third party to hold users' funds. Instead, DEX users transact with each other directly.
 
 ![LP in formulas](./assets/lp_in_formulas.png "In formulas")
+Playing with numbers we can see:
+- the rate isn't used in way we would expect at first glance
+- the number precision issue casued by missing decimal numbers (contract is using BiguUint).
+Based on the fact that basic unit (eg. Wei) for tokens are usually in 12-18 precision (1 ETH == 1000000000000000000 Wei) compare to used unit (eg. ETH)
+is this inconsistency is hidden. In example below is difference noticable as we are using small numbers to demostrating it.
+
 ![LP in numbers](./assets/lp_in_numbers.png "In numbers")
 
 ### Slippage
