@@ -14,7 +14,7 @@ Working example: https://amm-elrond.netlify.app/
 https://user-images.githubusercontent.com/143357/210095255-3633ec8b-c1b7-4569-82b5-e30a319068f4.mov
 
 
-## In Pictures
+## Basic terms in pictures
 ### Liquidity Pool (LP)
 Collection of tokens or digital assets locked in a smart contract that provide essential liquidity to decentralized exchanges (DEX).
 A DEX is an exchange that doesn't rely on a third party to hold users' funds. Instead, DEX users transact with each other directly.
