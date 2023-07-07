@@ -2,4 +2,5 @@ fe-svelte-kit/* linguist-vendored
 *.js linguist-detectable=false
 *.cjs linguist-detectable=false
 *.ts linguist-detectable=false
+*.svelte linguist-detectable=false
 *.rs linguist-detectable=true
